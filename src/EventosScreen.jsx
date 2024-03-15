@@ -1,60 +1,61 @@
-// EventsScreen.jsx
 import React from 'react';
-import eventImage1 from './assets/home.jpg'; // Asegúrate de tener imágenes de eventos en tu carpeta assets
-import eventImage2 from './assets/home.jpg';
-// Importa más imágenes según sea necesario
+import eventImage from './assets/home.jpg'; // Suponiendo que todas las imágenes son esta por el momento
 
 function EventosScreen() {
-  // Aquí iría la lógica para cargar los eventos, por ahora usaremos datos de ejemplo
-  const events = [
-    {
-      id: 1,
-      title: 'Feria de Ciencias 2024',
-      description: 'Explora los últimos avances de nuestros estudiantes y profesores.',
-      image: eventImage1
-    },
-    {
-      id: 2,
-      title: 'Conferencia Internacional de Robótica',
-      description: 'Descubre las innovaciones en robótica y su impacto en el futuro.',
-      image: eventImage2
-    },
-    {
-        id: 3,
-        title: 'Conferencia Internacional de Robótica',
-        description: 'Descubre las innovaciones en robótica y su impacto en el futuro.',
-        image: eventImage2
-    },
-    {
-        id: 4,
-        title: 'Conferencia Internacional de Robótica',
-        description: 'Descubre las innovaciones en robótica y su impacto en el futuro.',
-        image: eventImage2
-    },
-  ];
+    const events = [
+        {
+            id: 1,
+            title: 'Feria de Ciencias 2024',
+            description: 'Explora los últimos avances de nuestros estudiantes y profesores en el campo de la ciencia.',
+            date: '15 de marzo de 2024',
+            image: eventImage,
+            category: 'Ciencia'
+        },
+        {
+            id: 2,
+            title: 'Conferencia de Tecnología',
+            description: 'Descubre las últimas tendencias en tecnología y cómo están moldeando el futuro.',
+            date: '22 de abril de 2024',
+            image: eventImage,
+            category: 'Tecnología'
+        },
+        {
+            id: 3,
+            title: 'Exposición de Arte',
+            description: 'Sumérgete en el mundo del arte contemporáneo con nuestra exposición anual.',
+            date: '30 de mayo de 2024',
+            image: eventImage,
+            category: 'Arte'
+        },
+    ];
 
-  return (
-    <div className="bg-neutro-tertiary min-h-screen p-4">
-      <header className="text-center p-4 text-white  flex justify-between items-center">
-        <h1 className="text-4xl font-bold">Eventos Univalle</h1>
-        <button type="submit" className="bg-neutro-tertiary w-30% p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white" >HOME PAGE</button>
-      </header>
-      <div className="bg-white text-black p-4">
-        <div className="flex flex-wrap -mx-2">
-          {events.map(event => (
-            <div key={event.id} className="w-full  md:w-1/5 px-2 mb-4">
-              <div className="border  border-gray-200 p-4 rounded-lg bg-neutro-tertiary shadow-lg">
-                <h2 className="text-xl font-bold text-white">{event.title}</h2>
-                <p className="text-gray-300 mb-2">{event.description}</p>
-                <img src={event.image} alt={event.title} className="w-full h-auto rounded-md mb-4" />
-                {/* Aquí podrías añadir un enlace o botón para ver más detalles del evento */}
-              </div>
+    return (
+        <div className="bg-neutro-tertiary min-h-screen p-4">
+            <header className="text-center p-4 text-white flex justify-between items-center">
+                <h1 className="text-4xl font-bold">Eventos Univalle</h1>
+            </header>
+            <div className="container mx-auto py-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {events.map((event) => (
+                        <div key={event.id} className="overflow-hidden rounded-lg shadow-lg bg-white transform transition duration-500 hover:scale-105">
+                            <img src={event.image} alt={event.title} className="w-full h-56 object-cover" />
+                            <div className="p-4">
+                                <h3 className="font-bold text-xl mb-2">{event.title}</h3>
+                                <p className="text-gray-700 text-base mb-4">{event.description}</p>
+                                <div className="flex justify-between items-center">
+                                    <span className="bg-neutro-primary text-white text-sm py-1 px-3 rounded-full">{event.category}</span>
+                                    <span className="text-sm">{event.date}</span>
+                                </div>
+                                <button className="mt-4 bg-neutro-primary hover:bg-[#A7A9AC] text-white py-2 px-4 rounded transition ease-in-out duration-300">
+                                    Ver más
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
-          ))}
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default EventosScreen;

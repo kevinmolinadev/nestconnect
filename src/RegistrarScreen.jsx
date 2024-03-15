@@ -17,13 +17,13 @@ function RegistrarScreen() {
         <div className="flex flex-col h-screen">
             <div className="flex flex-grow justify-center items-center">
                 <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${Home})` }}>
-                    <div className="bg-white bg-opacity-75 p-8 rounded-lg shadow-2xl" 
+                    <div className="bg-white bg-opacity-0 p-8 rounded-lg shadow-2xl" 
                          style={{ 
                              maxWidth: '500px', 
                              margin: 'auto', 
                              marginTop: '20vh' 
                          }}>
-                        <h1 className="text-4xl font-bold text-black mb-6 text-center">BIENVENIDO A A.V.U</h1>
+                        <h1 className="text-4xl font-bold text-white mb-6 text-center">BIENVENIDO A A.V.U</h1>
                         <form>
                             <div className="mb-4">
                                 <input type="email" placeholder="Correo Electrónico" className="p-2 rounded-md w-full" />

@@ -8,6 +8,7 @@ import Carreras from "./assets/carreras.png";
 import Eventos from "./assets/eventos.png";
 import OP from "./assets/op.jpg";
 import Uni from "./assets/univalle.jpg";
+import ChatScreen from './ChatScreen';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -18,6 +19,10 @@ function App() {
   const showEventosScreen = () => setCurrentScreen('eventos');
   if (currentScreen === 'eventos') {
     return <EventosScreen />;
+  }
+  const showChatScreen = () => setCurrentScreen('chatscreen');
+  if (currentScreen === 'chatscreen') {
+    return <ChatScreen />;
   }
   
   return (
@@ -45,7 +50,9 @@ function App() {
                 <br />
                 En la intersección de la innovación tecnológica y la excelencia académica, AVU (Asistente Virtual Univalle) emerge como tu compañero inteligente y personalizado, diseñado para enriquecer tu experiencia universitaria. Desarrollado con la última tecnología en inteligencia artificial.
               </p>
-              <a className="bg-neutro-primary px-6 rounded-md py-4 mt-12 inline-block" href="">Iniciar chat con A.V.U</a>
+              <button onClick={showChatScreen} className="bg-neutro-primary px-6 py-4 rounded-md text-white">
+            Iniciar Chat Con A.V.U.
+          </button>
             </article>
           </div>
         </div>
