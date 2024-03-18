@@ -1,14 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import chatIcon from '../assets/home.jpg'; // Asegúrate de tener el ícono del chat en tus recursos.
-import logo from '../assets/univallebarra.jpg'; // Logo de la universidad
-import imageCarousel1 from '../assets/home.jpg'; // Imágenes para el carrusel
-//import imageCarousel2 from '../assets/image2.jpg';
-//import imageCarousel3 from '../assets/image3.jpg';
-import facebookLogo from '../assets/home.jpg'; // Logo de Facebook
-import instagramLogo from '../assets/home.jpg'; // Logo de Instagram
-import twitterLogo from '../assets/home.jpg';
-
 import { Chat } from "../../infraestructure/api/chat"
+import App from '../App';
+import ForgotPassword from './ForgotPassword';
+
 
 function ChatScreen() {
   const [messages, setMessages] = useState([
@@ -17,79 +12,82 @@ function ChatScreen() {
   ]);
   const [newMessage, setNewMessage] = useState('');
   const [answer, setAnswer] = useState("");
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [currentScreen, setCurrentScreen] = useState('home');
+
+
+  useEffect(() => {
+    if (newMessage.trim()) {
+      setMessages([...messages, { from: "bot", text: answer }]);
+    }
+    setNewMessage("")
+  }, [answer])
 
   const handleSendMessage = () => {
+    setMessages([...messages, { from: 'user', text: newMessage }])
     handleAnswer(newMessage)
-    if (newMessage.trim()) {
-      setMessages([...messages, { from: 'user', text: newMessage }, { from: "bot", text: answer }]);
-    }
-
-    console.log(messages)
   };
 
   const handleAnswer = (message) => {
-    Chat.answerQuestions(message).then(result => setAnswer(result.result))
-    setNewMessage("");
+    Chat.answerQuestions({ question: message }).then(res => {
+      setAnswer(res.result)
+    });
   }
 
-  console.log(newMessage)
+  const handleForgotPasswordClick = () => {
+    setShowForgotPassword(true);
+  };
+
+  if (showForgotPassword) {
+    return <ForgotPassword />;
+  }
+
+
+  const showApp = () => setCurrentScreen('app');
+  if (currentScreen === 'app') {
+    return <App />;
+  }
+
 
   return (
-    <div className="flex flex-row min-h-screen">
-      <div className="w-1/2 p-4 bg-neutro-tertiary">
-        <div className="mb-4">
-          <img src={logo} alt="Universidad del Valle" className="block mx-auto" />
+    <div className="flex flex-col items-center justify-center min-h-screen bg-neutro-tertiary">
+      <header className="w-full bg-neutro-primary p-4 flex justify-between items-center mb-8">
+        <img src={chatIcon} alt="Home" className="w-10 h-10" />
+        <nav>
+          <button onClick={showApp} className="text-white font-semibold mr-4">Home</button>
+          <button className="text-white font-semibold">Contacto</button>
+        </nav>
+      </header>
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
+        <div className="chat-header bg-neutro-primary p-4 rounded-t-lg flex justify-between items-center">
+          <h1 className="text-2xl text-white font-bold">Chat con A.V.U</h1>
+          <img src={chatIcon} alt="Chat Icon" className="w-10 h-10" />
         </div>
-        <div className="mb-4">
-          {/* Aquí puedes insertar tu carrusel de imágenes */}
-          <img src={imageCarousel1} alt="Imagen del carrusel" className="w-1/2 h-auto mx-auto" />
-          {/* Repetir con imageCarousel2, imageCarousel3, etc. */}
+        <div className="chat-messages p-4 h-96 overflow-y-auto bg-white rounded-b-lg">
+          {messages.map((message, index) => (
+            <div key={index} className={`message whitespace-pre-line ${message.from === 'bot' ? 'bg-gray-400' : 'bg-neutro-tertiary'} my-2 p-2 rounded-lg text-white`}>
+              {message.text}
+            </div>
+          ))}
         </div>
-        {/* Añadir enlaces a redes sociales aquí */}
-
-        <div className="p-4 flex justify-center items-center border-t border-neutro-primary">
-          <a href="https://www.facebook.com/UnivalleBolivia" target="_blank" rel="noopener noreferrer">
-            <img src={facebookLogo} alt="Facebook" className="h-8 mx-2" />
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-            <img src={instagramLogo} alt="Instagram" className="h-8 mx-2" />
-          </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-            <img src={twitterLogo} alt="Twitter" className="h-8 mx-2" />
-          </a>
-          {/* Añade más logos y enlaces según sea necesario */}
-        </div>
-      </div>
-
-      <div className="w-1/2 bg-white p-4 flex flex-col">
-        <div className="chat-screen bg-white flex-grow flex flex-col">
-          <div className="chat-header bg-neutro-tertiary p-2 rounded-t-lg flex justify-between items-center">
-            <div className="chat-title text-xl text-white font-bold">Preguntas Frecuentes</div>
-            <img src={chatIcon} alt="Chat Icon" className="w-8 h-8" />
-          </div>
-          <div className="chat-messages flex-grow p-4 overflow-y-auto">
-            {messages.map((message, index) => (
-              <div key={index} className={`message ${message.from === 'bot' ? 'bg-gray-300' : 'bg-neutro-tertiary'} my-2 p-2 rounded-lg text-white`}>
-                {message.text}
-              </div>
-            ))}
-          </div>
-          <div className="chat-input p-2">
-            <input
-              type="text"
-              className="p-2 w-full rounded-lg"
-              placeholder="Escribe tu mensaje aquí..."
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-            />
-            <button onClick={handleSendMessage} className="bg-neutro-primary text-white p-2 mt-2 rounded-lg w-full">
-              Enviar
-            </button>
+        <div className="chat-input p-4">
+          <input
+            type="text"
+            className="p-2 w-full rounded-lg border border-black"
+            placeholder="Escribe tu mensaje aquí..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+          />
+          <button onClick={handleSendMessage} className="bg-neutro-primary text-white p-2 mt-2 rounded-lg w-full">
+            Enviar
+          </button>
+          <div className="mt-4">
+            <a onClick={handleForgotPasswordClick} className="text-xl text-black cursor-pointer">
+              Preguntas Frecuentes
+            </a>
           </div>
         </div>
       </div>
-
     </div>
   );
 }

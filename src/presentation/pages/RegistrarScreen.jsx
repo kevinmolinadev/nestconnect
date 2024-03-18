@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Home from "../assets/home.jpg";
 import ForgotPassword from './ForgotPassword';
 
@@ -42,5 +42,4 @@ function RegistrarScreen() {
         </div>
     );
 }
-
 export default RegistrarScreen;

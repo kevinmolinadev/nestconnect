@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 
 import backgroundImage from"../assets/home.jpg";
 import RegistrarScreen from './RegistrarScreen'; 

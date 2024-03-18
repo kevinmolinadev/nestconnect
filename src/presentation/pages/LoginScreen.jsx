@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import LoginEst from './LoginEst'; // Asegúrate de que este componente existe y está en la misma carpeta
 import backgroundImage from "../assets/home.jpg";
 
