@@ -1,5 +1,4 @@
-import React from 'react';
-import Home from "./assets/home.jpg";
+import Home from "../assets/home.jpg";
 
 function ForgotPassword() {
     return (

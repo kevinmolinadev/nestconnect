@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import LoginEst from './LoginEst'; // Asegúrate de que este componente existe y está en la misma carpeta
-import backgroundImage from "./assets/home.jpg";
 
-function LoginScreen() {
-  const [currentScreen, setCurrentScreen] = useState('home');
+import backgroundImage from"../assets/home.jpg";
+import RegistrarScreen from './RegistrarScreen'; 
 
-  const showLoginEstScreen = () => setCurrentScreen('loginEst');
+function LoginEst() {
+    const [currentScreen, setCurrentScreen] = useState('home');
 
-  if (currentScreen === 'loginEst') {
-    return <LoginEst />;
-  }
+    const showRegistrarScreen = () => setCurrentScreen('registrarScreen');
 
-  // A continuación, el contenido de la pantalla 'home' (pantalla de inicio)
+    if (currentScreen === 'registrarScreen') {
+        return <RegistrarScreen />;
+    }
+  
   return (
     <div className="min-h-screen flex">
       <header className="w-full bg-neutro-tertiary p-7 text-center text-white fixed top-0 left-0 right-0 z-10">
@@ -36,8 +36,8 @@ function LoginScreen() {
             <div className="mb-8 text-right">
               <a href="#" className="text-sm text-black hover:underline">Olvidé mi contraseña</a>
             </div>
-            <button type="button" onClick={showLoginEstScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white" >ESTUDIANTE</button>
-            <button type="button" onClick={showLoginEstScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 mt-4">ADMINISTRADOR</button>
+            <button type="submit" className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white" >Iniciar sesión</button>
+            <button type="button" onClick={showRegistrarScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white">Registrarse</button>
           </form>
         </div>
       </div>
@@ -45,4 +45,4 @@ function LoginScreen() {
   );
 }
 
-export default LoginScreen;
+export default LoginEst;

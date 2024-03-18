@@ -1,5 +1,4 @@
-import React from 'react';
-import eventImage from './assets/home.jpg'; // Suponiendo que todas las imágenes son esta por el momento
+import eventImage from '../assets/home.jpg'; // Suponiendo que todas las imágenes son esta por el momento
 
 function EventosScreen() {
     const events = [
