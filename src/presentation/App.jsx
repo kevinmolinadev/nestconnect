@@ -3,6 +3,10 @@ import LoginScreen from './pages/LoginScreen';
 import EventosScreen from './pages/EventosScreen';
 import ForgotPassword from './pages/ForgotPassword';
 
+
+import profileImage from "./assets/profile.jpg";
+import backgroundImage from "./assets/background-image.jpg";
+
 import Home from "./assets/home.jpg";
 import Carreras from "./assets/carreras.png";
 import Eventos from "./assets/eventos.png";
@@ -10,6 +14,9 @@ import OP from "./assets/op.jpg";
 import Uni from "./assets/univalle.jpg";
 import ChatScreen from './pages/ChatScreen';
 import ItemsScreen from './pages/ItemsScreen';
+import ProfileScreen from './pages/ProfileScreen'
+
+
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
   const showLoginScreen = () => setCurrentScreen('login');
@@ -28,6 +35,11 @@ function App() {
   if (currentScreen === 'itemscreen') {
     return <ItemsScreen />;
   }
+  const showProfileScreen = () => setCurrentScreen('ProfileScreen');
+  if (currentScreen === 'ProfileScreen') {
+    return <ProfileScreen />;
+  }
+  
   
   return (
 
@@ -35,6 +47,7 @@ function App() {
       <div className="h-screen flex flex-col">
         <div className="bg-neutro-tertiary p-8 flex justify-between items-cente">
           <h1 className="text-4xl text-white">¡Bienvenido a la Universidad Privada del Valle!</h1>
+          <button className="bg-neutro-primary text-white px-2 py-7 rounded-md inline-block" onClick={showProfileScreen}>Perfil</button>
           <button className="bg-neutro-primary text-white px-5 py-4 rounded-md inline-block" onClick={showLoginScreen}>Iniciar Sesión</button>
 
         </div>
@@ -120,4 +133,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

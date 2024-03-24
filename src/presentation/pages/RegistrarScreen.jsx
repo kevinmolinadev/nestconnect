@@ -1,16 +1,28 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Home from "../assets/home.jpg";
 import ForgotPassword from './ForgotPassword';
+import CodeVerifier from './CodeVerifier';
 
 function RegistrarScreen() {
     const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [showCodeVerifier, setShowCodeVerifier] = useState(false);
 
     const handleForgotPasswordClick = () => {
         setShowForgotPassword(true);
+        setShowCodeVerifier(false); 
+    };
+
+    const handleCodeVerifierClick = () => {
+        setShowCodeVerifier(true);
+        setShowForgotPassword(false); 
     };
 
     if (showForgotPassword) {
         return <ForgotPassword />;
+    }
+
+    if (showCodeVerifier) {
+        return <CodeVerifier />;
     }
 
     return (
@@ -32,9 +44,11 @@ function RegistrarScreen() {
                                 <input type="password" placeholder="Contraseña" className="p-2 rounded-md w-full" />
                             </div>
                             <a onClick={handleForgotPasswordClick} className="text-xl text-white cursor-pointer">
-                                Olvidé mi contraseña
+                                Olvidaste tu contraseña?
                             </a>
-                            <button type="submit" className="bg-[#522B46] text-white rounded-md p-5 w-full mt-4 hover:bg-[#522B46] transition-colors duration-300">Regístrate</button>
+                            <button onClick={handleCodeVerifierClick} type="button" className="bg-[#522B46] text-white rounded-md p-5 w-full mt-4 hover:bg-[#522B46] transition-colors duration-300">
+                                Regístrate
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -42,4 +56,6 @@ function RegistrarScreen() {
         </div>
     );
 }
+
 export default RegistrarScreen;
+
