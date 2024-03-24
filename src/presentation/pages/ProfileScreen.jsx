@@ -1,50 +1,141 @@
 import React, { useState } from 'react';
-import Header from './Header'; // Asumiendo que tienes un componente de encabezado
+
+import profileImage from "../assets/profile.jpg";
+import backgroundImage from "../assets/background-image.jpg";
 
 function ProfileScreen() {
-  // Suponiendo que ya has obtenido los datos del usuario de alguna manera
-  const [user, setUser] = useState({
-    name: 'Juan',
-    lastName: 'Pérez',
-    email: 'juan.perez@example.com',
-    type: 'estudiante' // O 'profesor', según corresponda
-  });
+    const [aboutMeText, setAboutMeText] = useState('');
 
-  // Función para manejar la actualización del perfil, como cambiar la contraseña, etc.
-  const handleUpdateProfile = () => {
-    // Aquí se implementaría la lógica para actualizar el perfil
-  };
+    return (
+        <div style={{ position: 'relative', width: '100vw', minHeight: '100vh' }}>
+            <div style={{
+                height: '35vh',
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center top',
+                backgroundRepeat: 'no-repeat',
+            }}>
+                <img src={profileImage} alt="Perfil" style={{
+                    position: 'absolute',
+                    top: '20px',
+                    left: '20px',
+                    borderRadius: '100%',
+                    width: '250px',
+                    height: '250px',
+                    border: '4px solid white',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                }} />
+                
+                <button style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '20px',
+                    backgroundColor: '#522B46',
+                    color: 'white',
+                    padding: '10px 15px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    borderRadius: '4px',
+                    fontSize: '16px',
+                }}>
+                    Editar perfil
+                </button>
+            </div>
 
-  return (
-    <div className="bg-[#F4EFF3] min-h-screen">
-      <Header pageTitle="Perfil de Usuario" />
-      <div className="container mx-auto p-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-bold text-center mb-6">Información del Perfil</h2>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
-            <input type="text" value={user.name} readOnly className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Apellidos:</label>
-            <input type="text" value={user.lastName} readOnly className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico:</label>
-            <input type="text" value={user.email} readOnly className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">Tipo de Usuario:</label>
-            <input type="text" value={user.type} readOnly className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" />
-          </div>
-          {/* Implementar funcionalidades adicionales como cambio de contraseña, etc. */}
-          <button onClick={handleUpdateProfile} className="bg-neutro-primary text-white px-6 py-2 rounded-md mt-4">
-            Actualizar Perfil
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+            <div style={{ padding: '20px' }}>
+                <label htmlFor="aboutMe" style={{ display: 'block', marginBottom: '10px', fontSize: '20px', fontWeight: 'bold' }}>
+                    Sobre mí:
+                </label>
+                <textarea
+                    id="aboutMe"
+                    value={aboutMeText}
+                    onChange={(e) => setAboutMeText(e.target.value)}
+                    placeholder="Describe algo sobre ti..."
+                    style={{
+                        width: '100%',
+                        height: '100px',
+                        padding: '10px',
+                        fontSize: '16px',
+                        borderRadius: '4px',
+                        border: '1px solid #ccc',
+                        boxSizing: 'border-box',
+                    }}
+                />
+            </div>
 
+            <div style={{
+                position: 'absolute',
+                right: '100px', 
+                top: 'calc(35vh + 180px)', 
+                textAlign: 'right',
+                width: '200px', 
+            }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Nombre</div><div>Alexander Navarro Navarro</div>
+                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Correo Electronico</div>
+                <div>Nna0000452@est.univalle.edu</div>
+                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Tipo de Usuario</div>
+                <div>Estudiante</div>
+            </div>
+
+            <div style={{ padding: '0 20px' }}>
+                <div style={{ marginBottom: '10px', fontSize: '20px', fontWeight: 'bold' }}>
+                    PUEDES VER:
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <button style={{
+                        width: '150px',
+                        padding: '8px',
+                        marginBottom: '10px',
+                        backgroundColor: '#522B46',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                    }}>
+                        Becas
+                    </button>
+
+                    <button style={{
+                        width: '150px',
+                        padding: '8px',
+                        marginBottom: '10px',
+                        backgroundColor: '#522B46',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                    }}>
+                        Chat Bot
+                    </button>
+
+                    <button style={{
+                        width: '150px',
+                        padding: '8px',
+                        backgroundColor: '#522B46',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                    }}>
+                        Eventos de la Universidad
+                    </button>
+                </div>
+            </div>
+
+            <div style={{
+                backgroundColor: '#522B46',
+                height: '100px',
+                width: '100%',
+                position: 'absolute',
+                bottom: 0,
+                }}>
+                </div>
+                </div>
+                );
+                }
+                
 export default ProfileScreen;

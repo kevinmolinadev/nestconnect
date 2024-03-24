@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Home from "../assets/home.jpg";
 import ForgotPassword from './ForgotPassword';
+import CodeVerifier from './CodeVerifier';
 
 function RegistrarScreen() {
     const [name, setName] = useState('');
@@ -8,22 +9,34 @@ function RegistrarScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [userType, setUserType] = useState('');
+    const [campus, setCampus] = useState(''); // Estado para el campus
 
     const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [showCodeVerifier, setShowCodeVerifier] = useState(false);
 
     const handleForgotPasswordClick = () => {
         setShowForgotPassword(true);
+        setShowCodeVerifier(false); 
     };
 
-    const handleRegister = (e) => {
-        e.preventDefault();
-        // Aquí iría el código para manejar el registro del usuario
-        console.log({ name, lastName, email, userType, password });
+    const handleCodeVerifierClick = () => {
+        setShowCodeVerifier(true);
+        setShowForgotPassword(false); 
     };
 
     if (showForgotPassword) {
         return <ForgotPassword />;
     }
+
+    if (showCodeVerifier) {
+        return <CodeVerifier />;
+    }
+
+    const handleRegister = (e) => {
+        e.preventDefault();
+        console.log({ name, lastName, email, userType, campus, password });
+        // Implementar la lógica de registro aquí
+    };
 
     return (
         <div className="flex flex-col h-screen">
@@ -76,6 +89,18 @@ function RegistrarScreen() {
                                 </select>
                             </div>
                             <div className="mb-4">
+                                <select 
+                                    className="p-2 rounded-md w-full"
+                                    value={campus}
+                                    onChange={(e) => setCampus(e.target.value)}
+                                >
+                                    <option value="">Selecciona campus</option>
+                                    <option value="central">Santa cruz</option>
+                                    <option value="norte">Cochabamba</option>
+                                    <option value="sur">Sur</option>
+                                </select>
+                            </div>
+                            <div className="mb-4">
                                 <input 
                                     type="password" 
                                     placeholder="Contraseña" 
@@ -84,11 +109,9 @@ function RegistrarScreen() {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
-                            <button type="submit" className="bg-[#522B46] text-white rounded-md p-2 w-full mt-4 hover:bg-[#422D73] transition-colors duration-300">Regístrate</button>
+                            <button type="submit" onClick={handleCodeVerifierClick} className="bg-[#522B46] text-white rounded-md p-2 w-full mt-4 hover:bg-[#A7A9AC] transition-colors duration-300">Regístrate</button>
                         </form>
-                        <a onClick={handleForgotPasswordClick} className="text-lg text-[#522B46] cursor-pointer mt-4 block">
-                            Olvidé mi contraseña
-                        </a>
+                       
                     </div>
                 </div>
             </div>
