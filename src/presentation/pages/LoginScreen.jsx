@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import LoginEst from './LoginEst'; // Asegúrate de que este componente existe y está en la misma carpeta
 import backgroundImage from "../assets/home.jpg";
+import RegistrarScreen from './RegistrarScreen'; 
 
 function LoginScreen() {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -10,6 +11,12 @@ function LoginScreen() {
   if (currentScreen === 'loginEst') {
     return <LoginEst />;
   }
+
+  const showRegistrarScreen = () => setCurrentScreen('registrarScreen');
+
+    if (currentScreen === 'registrarScreen') {
+        return <RegistrarScreen />;
+    }
 
   // A continuación, el contenido de la pantalla 'home' (pantalla de inicio)
   return (
@@ -36,8 +43,8 @@ function LoginScreen() {
             <div className="mb-8 text-right">
               <a href="#" className="text-sm text-black hover:underline">Olvidé mi contraseña</a>
             </div>
-            <button type="button" onClick={showLoginEstScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white" >ESTUDIANTE</button>
-            <button type="button" onClick={showLoginEstScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 mt-4">ADMINISTRADOR</button>
+            <button type="button" /*onClick={showLoginEstScreen}</form>*/ className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white" >INICIAR SESION</button>
+            <button type="button" onClick={showRegistrarScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 mt-4 text-white">REGISTRARME</button>
           </form>
         </div>
       </div>

@@ -37,7 +37,7 @@ function LoginEst() {
               <a href="#" className="text-sm text-black hover:underline">Olvidé mi contraseña</a>
             </div>
             <button type="submit" className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white" >Iniciar sesión</button>
-            <button type="button" onClick={showRegistrarScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white">Registrarse</button>
+            <button type="button" onClick={showRegistrarScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white">RegistrarseEE</button>
           </form>
         </div>
       </div>

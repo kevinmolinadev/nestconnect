@@ -3,6 +3,7 @@ import chatIcon from '../assets/home.jpg'; // Asegúrate de tener el ícono del 
 import { Chat } from "../../infraestructure/api/chat"
 import App from '../App';
 import ForgotPassword from './ForgotPassword';
+import Header from './Header';
 
 
 function ChatScreen() {
@@ -51,13 +52,12 @@ function ChatScreen() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-neutro-tertiary">
-      <header className="w-full bg-neutro-primary p-4 flex justify-between items-center mb-8">
-        <img src={chatIcon} alt="Home" className="w-10 h-10" />
-        <nav>
-          <button onClick={showApp} className="text-white font-semibold mr-4">Home</button>
-          <button className="text-white font-semibold">Contacto</button>
-        </nav>
-      </header>
+      <Header
+        pageTitle="A.V.U."
+        onHomeClick={() => setCurrentScreen('home')}
+        onEventosClick={() => setCurrentScreen('eventos')}
+        onAyudaClick={() => setCurrentScreen('ayuda')}
+      />
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
         <div className="chat-header bg-neutro-primary p-4 rounded-t-lg flex justify-between items-center">
           <h1 className="text-2xl text-white font-bold">Chat con A.V.U</h1>

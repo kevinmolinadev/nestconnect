@@ -1,4 +1,5 @@
 import eventImage from '../assets/home.jpg'; // Suponiendo que todas las imágenes son esta por el momento
+import Header from './Header';
 
 function EventosScreen() {
     const events = [
@@ -29,10 +30,13 @@ function EventosScreen() {
     ];
 
     return (
-        <div className="bg-neutro-tertiary min-h-screen p-4">
-            <header className="text-center p-4 text-white flex justify-between items-center">
-                <h1 className="text-4xl font-bold">Eventos Univalle</h1>
-            </header>
+        <div className="bg-[#F4EFF3] min-h-screen p-4">
+            <Header
+        pageTitle="EVENTOS"
+        onHomeClick={() => setCurrentScreen('home')}
+        onEventosClick={() => setCurrentScreen('eventos')}
+        onAyudaClick={() => setCurrentScreen('ayuda')}
+      />
             <div className="container mx-auto py-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {events.map((event) => (
