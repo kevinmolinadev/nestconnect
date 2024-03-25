@@ -7,6 +7,18 @@ import Header from './Header';
 
 
 function ChatScreen() {
+  const [showChatScreen, setShowChatScreen] = useState(false);
+  const [aboutMeText, setAboutMeText] = useState('');
+
+  if (showChatScreen) {
+    return <ChatScreen />;
+  }
+
+  const handleChatScreen = () => {
+    setShowChatScreen(true);
+  };
+
+
   const [messages, setMessages] = useState([
     { from: 'user', text: '¿Puedes darme información sobre las inscripciones?' },
     { from: 'bot', text: '¡Claro! Las inscripciones están abiertas hasta el 02/03/2024. ¿Te gustaría saber más sobre las becas disponibles?' },

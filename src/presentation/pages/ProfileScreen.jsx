@@ -3,8 +3,30 @@ import React, { useState } from 'react';
 import profileImage from "../assets/profile.jpg";
 import backgroundImage from "../assets/background-image.jpg";
 
+import ChatScreen from './ChatScreen';
+import EventosScreen from './EventosScreen';
+
 function ProfileScreen() {
+
+    const [showChatScreen, setShowChatScreen] = useState(false);
+    const [showEventosScreen, setShowEventosScreen] = useState(false);
     const [aboutMeText, setAboutMeText] = useState('');
+
+    const handleChatScreen = () => {
+        setShowChatScreen(true);
+    };
+
+    const handleEventosScreen = () => {
+        setShowEventosScreen(true);
+    };
+
+    if (showChatScreen) {
+        return <ChatScreen />;
+    }
+
+    if (showEventosScreen) {
+        return <EventosScreen />;
+    }
 
     return (
         <div style={{ position: 'relative', width: '100vw', minHeight: '100vh' }}>
@@ -26,7 +48,7 @@ function ProfileScreen() {
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                 }} />
                 
-                <button style={{
+               {/*  <button style={{
                     position: 'absolute',
                     top: '10px',
                     right: '20px',
@@ -39,7 +61,7 @@ function ProfileScreen() {
                     fontSize: '16px',
                 }}>
                     Editar perfil
-                </button>
+                </button> */}
             </div>
 
             <div style={{ padding: '20px' }}>
@@ -83,21 +105,10 @@ function ProfileScreen() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                    <button style={{
-                        width: '150px',
-                        padding: '8px',
-                        marginBottom: '10px',
-                        backgroundColor: '#522B46',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                    }}>
-                        Becas
-                    </button>
+                    
+                    
 
-                    <button style={{
+                    <button onClick={handleChatScreen} style={{
                         width: '150px',
                         padding: '8px',
                         marginBottom: '10px',
@@ -111,7 +122,7 @@ function ProfileScreen() {
                         Chat Bot
                     </button>
 
-                    <button style={{
+                    <button onClick={handleEventosScreen} style={{
                         width: '150px',
                         padding: '8px',
                         backgroundColor: '#522B46',
