@@ -45,14 +45,16 @@ function RegistrarScreen() {
             const data = await response.json();
     
             if (!response.ok) {
-                throw new Error(data.message || 'Error en el registro');
+                throw data;
             }
     
             console.log('Registro exitoso', data);
             setShowCodeVerifier(true); // Cambiar a la pantalla CodeVerifier en éxito
-        } catch (error) {
-            console.error('Error al conectar con la API', error);
-            setError(`Error al conectar con la API: ${error.toString()}`);
+        } catch (e) {
+            const {error} = e
+            for (const item in error){
+                setError(error[item]);
+            }
         }
     };
     
@@ -145,4 +147,3 @@ function RegistrarScreen() {
 }
 
 export default RegistrarScreen;
-

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-function Assistant() {
+function Assistant({ onFormSubmitted }) {
   const [formData, setFormData] = useState({ name: '', phone: '' });
   const [errors, setErrors] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Validador simple
   const validate = () => {
     let tempErrors = {};
     if (!formData.name) {
@@ -19,25 +19,24 @@ function Assistant() {
     return Object.keys(tempErrors).length === 0;
   };
 
-  
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-
-
-      const response = await fetch("http://localhost:3000/api/v1/section-type/send-chat",{
-        credentials:"include",
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
+      const response = await fetch("http://localhost:3000/api/v1/section-type/send-chat", {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
         },
-        body:JSON.stringify({user:formData,chat:sessionStorage.getItem("chat")})
-    })
-    if (response.ok) {
-      console.log('Formulario enviado', formData);
-    }
+        body: JSON.stringify({ user: formData, chat: JSON.parse(sessionStorage.getItem("chat")) })
+      });
+      if (response.ok) {
+        setIsSubmitted(true);
+        setTimeout(() => {
+          setIsSubmitted(false);
+          onFormSubmitted();
+        }, 3000);
+      }
     }
   };
 
@@ -46,15 +45,26 @@ function Assistant() {
     setFormData({ ...formData, [name]: value });
   };
 
+  if (isSubmitted) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="bg-white p-8 rounded-lg shadow-xl text-center">
+          <h2 className="text-gray-700 text-xl mb-4">Gracias por enviar tu formulario</h2>
+          <p>Un asesor se contactará contigo.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="bg-white p-8 rounded-lg shadow-2xl" style={{ maxWidth: '400px' }}>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <h2 className="text-gray-700 text-3xl text-center mb-6">Código de Verificación</h2>
-          <p className="text-gray-700 mb-4 text-sm text-center">Introduce el código de verificación que se te fue enviado a tu correo electrónico.</p>
+          <h2 className="text-gray-700 text-3xl text-center mb-6">Contactar con Asesor</h2>
+          <p className="text-gray-700 mb-4 text-sm text-center">Completa el formulario para ponerte en contacto con un asesor.</p>
           
           <div className="flex flex-col mb-4">
-            <label htmlFor="nombre" className="text-gray-700 mb-2">Nombre</label>
+            <label htmlFor="name" className="text-gray-700 mb-2">Nombre</label>
             <input
               type="text"
               name="name"
@@ -68,7 +78,7 @@ function Assistant() {
           </div>
 
           <div className="flex flex-col mb-4">
-            <label htmlFor="telefono" className="text-gray-700 mb-2">Teléfono</label>
+            <label htmlFor="phone" className="text-gray-700 mb-2">Teléfono</label>
             <input
               type="text"
               name="phone"
@@ -81,9 +91,8 @@ function Assistant() {
             {errors.phone && <p className="text-red-500 mt-2">{errors.phone}</p>}
           </div>
 
-
           <div className="flex flex-col">
-            <button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white w-full p-3 rounded-md transition duration-300 mt-4">Enviar</button>
+            <button type="submit" className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] text-white transition duration-300 mt-4">Contactar Asesor</button>
           </div>
         </form>
       </div>

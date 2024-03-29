@@ -12,9 +12,11 @@ import ChatScreen from './pages/ChatScreen';
 import ItemsScreen from './pages/ItemsScreen';
 import FaqScreen from './pages/FaqScreen';
 import ProfileScreen from './pages/ProfileScreen';
+import Assistant from './pages/assistant';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
+
   const showLoginScreen = () => setCurrentScreen('login');
   if (currentScreen === 'login') {
     return <LoginScreen />;
@@ -40,7 +42,18 @@ function App() {
     return <ProfileScreen/>;
   }
 
- 
+
+  const handleFormSubmitted = () => {
+    setCurrentScreen('home'); // Cambiar la pantalla actual a 'home'
+  };
+
+  const showAssistantScreen = () => setCurrentScreen('assistant');
+
+  switch (currentScreen) {
+    case 'assistant':
+      return <Assistant onFormSubmitted={handleFormSubmitted} />;
+    case 'home':
+    default:
   
   return (
     <>
@@ -152,6 +165,7 @@ function App() {
         </div>
     </>
   )
+}
 }
 
 export default App
