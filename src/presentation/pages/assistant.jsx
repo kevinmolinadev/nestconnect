@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function Assistant() {
   const [formData, setFormData] = useState({ name: '', phone: '' });
@@ -33,7 +33,7 @@ function Assistant() {
         headers:{
             "Content-Type":"application/json"
         },
-        body:JSON.stringify({user:formData,chat:sessionStorage.getItem("chat")})
+        body:JSON.stringify({user:formData,chat:JSON.parse(sessionStorage.getItem("chat"))})
     })
     if (response.ok) {
       console.log('Formulario enviado', formData);
