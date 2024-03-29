@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import profileImage from "../assets/profile.jpg";
 import backgroundImage from "../assets/background-image.jpg";
@@ -11,6 +11,37 @@ function ProfileScreen() {
     const [showChatScreen, setShowChatScreen] = useState(false);
     const [showEventosScreen, setShowEventosScreen] = useState(false);
     const [aboutMeText, setAboutMeText] = useState('');
+
+
+    const [profileData, setProfileData] = useState({
+        name: '',
+        lastName: '',
+        email: '',
+        campusName: '',
+    });
+
+    useEffect(() => {
+        // Consumir la API para obtener el perfil del usuario
+        const fetchData = async () => {
+            try {
+                const response = await fetch("http://localhost:3000/api/v1/user/profile",{credentials: 'include',});
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message);
+
+                setProfileData({
+                    name: data.name,
+                    lastName: data.last_name,
+                    email: data.email,
+                    campusName: data.id_campus.name,
+                });
+            } catch (error) {
+                console.error("Error fetching profile data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
 
     const handleChatScreen = () => {
         setShowChatScreen(true);
@@ -48,7 +79,7 @@ function ProfileScreen() {
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                 }} />
                 
-               {/*  <button style={{
+               {  <button style={{
                     position: 'absolute',
                     top: '10px',
                     right: '20px',
@@ -60,8 +91,8 @@ function ProfileScreen() {
                     borderRadius: '4px',
                     fontSize: '16px',
                 }}>
-                    Editar perfil
-                </button> */}
+                    Cerrar Sesion
+                </button> }
             </div>
 
             <div style={{ padding: '20px' }}>
@@ -92,11 +123,12 @@ function ProfileScreen() {
                 textAlign: 'right',
                 width: '200px', 
             }}>
-                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Nombre</div><div>Alexander Navarro Navarro</div>
-                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Correo Electronico</div>
-                <div>Nna0000452@est.univalle.edu</div>
-                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Tipo de Usuario</div>
-                <div>Estudiante</div>
+                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Nombre</div>
+                <div>{profileData.name} {profileData.lastName}</div>
+                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Correo Electrónico</div>
+                <div>{profileData.email}</div>
+                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Campus</div>
+                <div>{profileData.campusName}</div>
             </div>
 
             <div style={{ padding: '0 20px' }}>
@@ -139,7 +171,7 @@ function ProfileScreen() {
 
             <div style={{
                 backgroundColor: '#522B46',
-                height: '100px',
+                height: '50px',
                 width: '100%',
                 position: 'absolute',
                 bottom: 0,

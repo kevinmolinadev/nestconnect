@@ -19,6 +19,7 @@ function ChatScreen() {
     if (newMessage.trim()) {
       setMessages([...messages, { from: "assistant", text: answer }]);
       setNewMessage("")
+      setAnswer('')
     }
   }, [answer])
 
@@ -73,7 +74,7 @@ function ChatScreen() {
         <div className="chat-header bg-neutro-primary p-4 rounded-t-lg flex justify-between items-center">
           <h1 className="text-2xl text-white font-bold">Chat con A.V.U</h1>
           {
-            messages.length > 4 && (
+            messages.length >= 4 && (
               <button onClick={handleAssistant} className="px-4 py-2 text-white  border-white border-2 rounded-md hover:bg-white hover:transition-colors hover:text-black   duration-500 ">Contactar asesor</button>
             )
           }
