@@ -75,9 +75,6 @@ function LoginScreen() {
             </div>
             <button type="button" onClick={handleLogin} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 text-white" >INICIAR SESION</button>
             <button type="button" onClick={showRegistrarScreen} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 mt-4 text-white">REGISTRARME</button>
-            <button type="button" onClick={() => {
-                
-            }} className="bg-neutro-tertiary w-full p-3 rounded-md hover:bg-[#A7A9AC] transition duration-300 mt-4 text-white">CLEAR COOKIES</button>
           </form>
         </div>
       </div>

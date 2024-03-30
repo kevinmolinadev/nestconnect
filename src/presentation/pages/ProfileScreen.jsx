@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
-
 import profileImage from "../assets/profile.jpg";
 import backgroundImage from "../assets/background-image.jpg";
-
 import ChatScreen from './ChatScreen';
 import EventosScreen from './EventosScreen';
+import LoginScreen from './LoginScreen';
 
 function ProfileScreen() {
-
     const [showChatScreen, setShowChatScreen] = useState(false);
     const [showEventosScreen, setShowEventosScreen] = useState(false);
     const [aboutMeText, setAboutMeText] = useState('');
-
-
     const [profileData, setProfileData] = useState({
         name: '',
         lastName: '',
@@ -21,13 +17,11 @@ function ProfileScreen() {
     });
 
     useEffect(() => {
-        // Consumir la API para obtener el perfil del usuario
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/v1/user/profile",{credentials: 'include',});
+                const response = await fetch("http://localhost:3000/api/v1/user/profile", { credentials: 'include' });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.message);
-
                 setProfileData({
                     name: data.name,
                     lastName: data.last_name,
@@ -42,6 +36,14 @@ function ProfileScreen() {
         fetchData();
     }, []);
 
+    const handleLogout = async () => {
+        try {
+            await fetch('http://localhost:3000/api/v1/auth/logout', { method: 'GET', credentials: 'include' });
+            window.location.href = '/LoginScreen';
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    };
 
     const handleChatScreen = () => {
         setShowChatScreen(true);
@@ -78,8 +80,7 @@ function ProfileScreen() {
                     border: '4px solid white',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                 }} />
-                
-               {  <button style={{
+                <button onClick={handleLogout} style={{
                     position: 'absolute',
                     top: '10px',
                     right: '20px',
@@ -92,7 +93,7 @@ function ProfileScreen() {
                     fontSize: '16px',
                 }}>
                     Cerrar Sesion
-                </button> }
+                </button>
             </div>
 
             <div style={{ padding: '20px' }}>
@@ -135,38 +136,31 @@ function ProfileScreen() {
                 <div style={{ marginBottom: '10px', fontSize: '20px', fontWeight: 'bold' }}>
                     PUEDES VER:
                 </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                    
-                    
-
-                    <button onClick={handleChatScreen} style={{
-                        width: '150px',
-                        padding: '8px',
-                        marginBottom: '10px',
-                        backgroundColor: '#522B46',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                    }}>
-                        Chat Bot
-                    </button>
-
-                    <button onClick={handleEventosScreen} style={{
-                        width: '150px',
-                        padding: '8px',
-                        backgroundColor: '#522B46',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                    }}>
-                        Eventos de la Universidad
-                    </button>
-                </div>
+                <button onClick={handleChatScreen} style={{
+                    width: '150px',
+                    padding: '8px',
+                    marginBottom: '10px',
+                    backgroundColor: '#522B46',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                }}>
+                    Chat Bot
+                </button>
+                <button onClick={handleEventosScreen} style={{
+                    width: '150px',
+                    padding: '8px',
+                    backgroundColor: '#522B46',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                }}>
+                    Eventos de la Universidad
+                </button>
             </div>
 
             <div style={{
@@ -175,10 +169,9 @@ function ProfileScreen() {
                 width: '100%',
                 position: 'absolute',
                 bottom: 0,
-                }}>
-                </div>
-                </div>
-                );
-                }
-                
+            }}></div>
+        </div>
+    );
+}
+
 export default ProfileScreen;
