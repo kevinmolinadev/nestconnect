@@ -11,6 +11,7 @@ function ForgotPassword() {
     const showNewPassword = () => {
         setCurrentScreen('NewPassword');
         // Aquí podrías enviar el código de restablecimiento a la API
+        //AVANCE
         sendResetCode(email);
     };
 
