@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Home from "../assets/home.jpg";
 
-function PasswordVerifier({ onVerifySuccess }) {
+function PasswordVerifier({ onSuccess }) {
     const [code, setCode] = useState('');
     const [error, setError] = useState('');
 
@@ -16,7 +16,7 @@ function PasswordVerifier({ onVerifySuccess }) {
             });
 
             if (response.ok) {
-                onVerifySuccess(); // Si tienes una función para manejar el éxito de la verificación, llámala aquí
+                onSuccess()
             } else {
                 const data = await response.json();
                 setError(data.message || 'Error al verificar el código.');

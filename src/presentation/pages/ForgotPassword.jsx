@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Home from "../assets/home.jpg";
 import NewPassword from './NewPassword';
 import PasswordVerifier from './PasswordVerifier';
+import App from '../App';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
@@ -44,7 +45,15 @@ function ForgotPassword() {
     };
 
     if (currentScreen === 'PasswordVerifier') {
-        return <PasswordVerifier />;
+        return <PasswordVerifier onSuccess={() => setCurrentScreen("NewPassword")} />;
+    }
+
+    if (currentScreen === "NewPassword") {
+        return <NewPassword onResetComplete={() => setCurrentScreen("Home")} />
+    }
+
+    if (currentScreen === "Home") {
+        return <App />
     }
 
     return (

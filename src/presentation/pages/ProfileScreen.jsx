@@ -5,7 +5,7 @@ import ChatScreen from './ChatScreen';
 import EventosScreen from './EventosScreen';
 import LoginScreen from './LoginScreen';
 
-function ProfileScreen() {
+function ProfileScreen({ onLogoutComplete }) {
     const [showChatScreen, setShowChatScreen] = useState(false);
     const [showEventosScreen, setShowEventosScreen] = useState(false);
     const [aboutMeText, setAboutMeText] = useState('');
@@ -39,7 +39,7 @@ function ProfileScreen() {
     const handleLogout = async () => {
         try {
             await fetch('http://localhost:3000/api/v1/auth/logout', { method: 'GET', credentials: 'include' });
-            window.location.href = '/LoginScreen';
+            onLogoutComplete()
         } catch (error) {
             console.error('Error during logout:', error);
         }
@@ -119,10 +119,10 @@ function ProfileScreen() {
 
             <div style={{
                 position: 'absolute',
-                right: '100px', 
-                top: 'calc(35vh + 180px)', 
+                right: '100px',
+                top: 'calc(35vh + 180px)',
                 textAlign: 'right',
-                width: '200px', 
+                width: '200px',
             }}>
                 <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Nombre</div>
                 <div>{profileData.name} {profileData.lastName}</div>
