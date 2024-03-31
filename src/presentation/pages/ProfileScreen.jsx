@@ -9,6 +9,9 @@ function ProfileScreen({ onLogoutComplete }) {
     const [showChatScreen, setShowChatScreen] = useState(false);
     const [showEventosScreen, setShowEventosScreen] = useState(false);
     const [aboutMeText, setAboutMeText] = useState('');
+    const [newName, setNewName] = useState('');
+    const [newLastName, setNewLastName] = useState('');
+    const [showEditProfileModal, setShowEditProfileModal] = useState(false);
     const [profileData, setProfileData] = useState({
         name: '',
         lastName: '',
@@ -17,6 +20,7 @@ function ProfileScreen({ onLogoutComplete }) {
     });
 
     useEffect(() => {
+        // Fetch the profile data from the backend
         const fetchData = async () => {
             try {
                 const response = await fetch("http://localhost:3000/api/v1/user/profile", { credentials: 'include' });
@@ -36,23 +40,61 @@ function ProfileScreen({ onLogoutComplete }) {
         fetchData();
     }, []);
 
+    // Log out the user
     const handleLogout = async () => {
         try {
             await fetch('http://localhost:3000/api/v1/auth/logout', { method: 'GET', credentials: 'include' });
-            onLogoutComplete()
+            onLogoutComplete();
         } catch (error) {
             console.error('Error during logout:', error);
         }
     };
 
+    const handleSaveChanges = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/user/profile', {
+                method: 'PUT',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: newName,
+                    last_name: newLastName,
+                }), 
+            });
+            const data = await response.json();
+            console.log(data);
+            if (!response.ok) throw new Error(data.message);
+
+            setProfileData({
+                ...profileData,
+                name:data.name,
+                lastName: data.last_name,
+            });
+            // Cerrar el modal después de guardar
+            setShowEditProfileModal(false);
+        } catch (error) {
+            console.error('Error saving profile changes:', error);
+        }
+    };
+
+    // Show chat screen
     const handleChatScreen = () => {
         setShowChatScreen(true);
     };
 
+    // Show eventos screen
     const handleEventosScreen = () => {
         setShowEventosScreen(true);
     };
 
+    // Handle click on Edit Profile button
+    const handleEditProfileClick = () => {
+        setShowEditProfileModal(true);
+    };
+
+    // Conditional rendering for ChatScreen and EventosScreen
     if (showChatScreen) {
         return <ChatScreen />;
     }
@@ -163,6 +205,69 @@ function ProfileScreen({ onLogoutComplete }) {
                 </button>
             </div>
 
+            {/* Edit Profile Button */}
+            <button onClick={handleEditProfileClick} style={{
+                position: 'absolute',
+                left: '3px',
+                bottom: '55px',
+                backgroundColor: '#522B46',
+                color: 'white',
+                padding: '10px 15px',
+                border: 'none',
+                cursor: 'pointer',
+                borderRadius: '4px',
+                fontSize: '20px',
+            }}>
+                Editar Perfil
+            </button>
+
+            {/* Edit Profile Modal */}
+            {showEditProfileModal && (
+                <div style={{
+                    position: 'fixed',
+                    top: '0',
+                    left: '0',
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: '1000',
+                }}>
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '4px',
+                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '300px',
+                    }}>
+                        <label htmlFor="newName" style={{ marginBottom: '10px' }}>Cambiar nombre:</label>
+                        <input
+            id="newName"
+            type="text"
+            placeholder="Nuevo nombre"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+        />
+        <input
+            id="newLastName"
+            type="text"
+            placeholder="Nuevo apellido"
+            value={newLastName}
+            onChange={(e) => setNewLastName(e.target.value)}
+            style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+        />
+        <button
+onClick={handleSaveChanges}>
+            Guardar cambios
+                     </button>
+                    </div>
+                </div>
+            )}
             <div style={{
                 backgroundColor: '#522B46',
                 height: '50px',
@@ -175,3 +280,4 @@ function ProfileScreen({ onLogoutComplete }) {
 }
 
 export default ProfileScreen;
+
