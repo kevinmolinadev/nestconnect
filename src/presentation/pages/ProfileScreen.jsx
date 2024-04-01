@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import profileImage from "../assets/profile.jpg";
+import profileImage from "../assets/gatito.jpg";
 import backgroundImage from "../assets/background-image.jpg";
 import ChatScreen from './ChatScreen';
 import EventosScreen from './EventosScreen';
-import LoginScreen from './LoginScreen';
 
 function ProfileScreen({ onLogoutComplete }) {
     const [showChatScreen, setShowChatScreen] = useState(false);
@@ -72,29 +71,24 @@ function ProfileScreen({ onLogoutComplete }) {
                 name:data.name,
                 lastName: data.last_name,
             });
-            // Cerrar el modal después de guardar
             setShowEditProfileModal(false);
         } catch (error) {
             console.error('Error saving profile changes:', error);
         }
     };
 
-    // Show chat screen
     const handleChatScreen = () => {
         setShowChatScreen(true);
     };
 
-    // Show eventos screen
     const handleEventosScreen = () => {
         setShowEventosScreen(true);
     };
 
-    // Handle click on Edit Profile button
     const handleEditProfileClick = () => {
         setShowEditProfileModal(true);
     };
 
-    // Conditional rendering for ChatScreen and EventosScreen
     if (showChatScreen) {
         return <ChatScreen />;
     }
@@ -114,11 +108,11 @@ function ProfileScreen({ onLogoutComplete }) {
             }}>
                 <img src={profileImage} alt="Perfil" style={{
                     position: 'absolute',
-                    top: '20px',
+                    top: '10px',
                     left: '20px',
                     borderRadius: '100%',
-                    width: '250px',
-                    height: '250px',
+                    width: '200px',
+                    height: '200px',
                     border: '4px solid white',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                 }} />
@@ -178,50 +172,48 @@ function ProfileScreen({ onLogoutComplete }) {
                 <div style={{ marginBottom: '10px', fontSize: '20px', fontWeight: 'bold' }}>
                     PUEDES VER:
                 </div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <button onClick={handleChatScreen} style={{
-                    width: '150px',
-                    padding: '8px',
-                    marginBottom: '10px',
-                    backgroundColor: '#522B46',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                }}>
-                    Chat Bot
-                </button>
-                <button onClick={handleEventosScreen} style={{
-                    width: '150px',
-                    padding: '8px',
-                    backgroundColor: '#522B46',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                }}>
-                    Eventos de la Universidad
-                </button>
+        width: '150px',
+        padding: '8px',
+        marginBottom: '10px',
+        backgroundColor: '#522B46',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '14px',
+    }}>
+        Chat Bot
+    </button>
+    <button onClick={handleEventosScreen} style={{
+        width: '150px',
+        padding: '8px',
+        marginBottom: '10px',
+        backgroundColor: '#522B46',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '14px',
+    }}>
+        Eventos de la Universidad
+    </button>
+    <button onClick={handleEditProfileClick} style={{
+        width: '150px',
+        padding: '8px',
+        backgroundColor: '#522B46',
+        color: 'white',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontSize: '14px',
+    }}>
+        Editar Perfil
+    </button>
+                </div>
             </div>
 
-            {/* Edit Profile Button */}
-            <button onClick={handleEditProfileClick} style={{
-                position: 'absolute',
-                left: '3px',
-                bottom: '55px',
-                backgroundColor: '#522B46',
-                color: 'white',
-                padding: '10px 15px',
-                border: 'none',
-                cursor: 'pointer',
-                borderRadius: '4px',
-                fontSize: '20px',
-            }}>
-                Editar Perfil
-            </button>
-
-            {/* Edit Profile Modal */}
             {showEditProfileModal && (
                 <div style={{
                     position: 'fixed',
@@ -244,40 +236,31 @@ function ProfileScreen({ onLogoutComplete }) {
                         flexDirection: 'column',
                         width: '300px',
                     }}>
-                        <label htmlFor="newName" style={{ marginBottom: '10px' }}>Cambiar nombre:</label>
+                        <label htmlFor="newName">Cambiar nombre:</label>
                         <input
-            id="newName"
-            type="text"
-            placeholder="Nuevo nombre"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-        />
-        <input
-            id="newLastName"
-            type="text"
-            placeholder="Nuevo apellido"
-            value={newLastName}
-            onChange={(e) => setNewLastName(e.target.value)}
-            style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-        />
-        <button
-onClick={handleSaveChanges}>
-            Guardar cambios
-                     </button>
+                            id="newName"
+                            type="text"
+                            placeholder="Nuevo nombre"
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                            style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+                        />
+                        <input
+                            id="newLastName"
+                            type="text"
+                            placeholder="Nuevo apellido"
+                            value={newLastName}
+                            onChange={(e) => setNewLastName(e.target.value)}
+                            style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+                        />
+                        <button onClick={handleSaveChanges} style={{ backgroundColor: '#522B46', color: '#FFFFFF', padding: '10px 15px', border: 'none', borderRadius: '4px' }}>
+                            Guardar cambios
+                        </button>
                     </div>
                 </div>
             )}
-            <div style={{
-                backgroundColor: '#522B46',
-                height: '50px',
-                width: '100%',
-                position: 'absolute',
-                bottom: 0,
-            }}></div>
         </div>
     );
 }
 
 export default ProfileScreen;
-
