@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import chatIcon from '../assets/home.jpg';
 import { Chat } from "../../infraestructure/api/chat";
 import App from '../App';
@@ -14,6 +14,20 @@ function ChatScreen() {
     const [currentScreen, setCurrentScreen] = useState('home');
     const [showPopup, setShowPopup] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
+
+    useEffect(() => {
+        const welcomeMessage = "Hola soy AVU, bienvenido. ¿En qué puedo ayudarte?";
+        let i = 0;
+        const typeWriter = () => {
+            if (i < welcomeMessage.length) {
+                const partialWelcome = welcomeMessage.slice(0, i + 1);
+                setMessages([{ from: 'assistant', text: partialWelcome }]);
+                i++;
+                setTimeout(typeWriter, 30);
+            }
+        };
+        typeWriter();
+    }, []);
 
     useEffect(() => {
         if (messages.length > 2 && messages[messages.length - 1].from === 'user') {
@@ -39,14 +53,13 @@ function ChatScreen() {
                             setMessages(messages => [...messages.slice(0, -1), { from: 'assistant', text: partialResponse }]);
                         }
                         i++;
-                        setTimeout(typeWriter, 20); // Ajusta la velocidad de escritura aquí
+                        setTimeout(typeWriter, 20);
                     }
                 };
                 typeWriter();
             });
 
             setNewMessage('');
-            setShowPopup(false);
         }
     };
 
