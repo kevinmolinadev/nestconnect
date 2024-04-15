@@ -215,50 +215,55 @@ function ProfileScreen({ onLogoutComplete }) {
             </div>
 
             {showEditProfileModal && (
-                <div style={{
-                    position: 'fixed',
-                    top: '0',
-                    left: '0',
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    zIndex: '1000',
-                }}>
-                    <div style={{
-                        backgroundColor: 'white',
-                        padding: '20px',
-                        borderRadius: '4px',
-                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: '300px',
-                    }}>
-                        <label htmlFor="newName">Cambiar nombre:</label>
-                        <input
-                            id="newName"
-                            type="text"
-                            placeholder="Nuevo nombre"
-                            value={newName}
-                            onChange={(e) => setNewName(e.target.value)}
-                            style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-                        />
-                        <input
-                            id="newLastName"
-                            type="text"
-                            placeholder="Nuevo apellido"
-                            value={newLastName}
-                            onChange={(e) => setNewLastName(e.target.value)}
-                            style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-                        />
-                        <button onClick={handleSaveChanges} style={{ backgroundColor: '#522B46', color: '#FFFFFF', padding: '10px 15px', border: 'none', borderRadius: '4px' }}>
-                            Guardar cambios
-                        </button>
-                    </div>
-                </div>
-            )}
+    <div style={{
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: '1000',
+    }}>
+        <div style={{
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '4px',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+            display: 'flex',
+            flexDirection: 'column',
+            width: '300px',
+        }}>
+            <div style={{ position: 'relative' }}>
+                <svg onClick={() => setShowEditProfileModal(false)} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', top: '10px', left: '10px', cursor: 'pointer' }}>
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </div>
+            <label htmlFor="newName">Cambiar nombre:</label>
+            <input
+                id="newName"
+                type="text"
+                placeholder="Nuevo nombre"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+            />
+            <input
+                id="newLastName"
+                type="text"
+                placeholder="Nuevo apellido"
+                value={newLastName}
+                onChange={(e) => setNewLastName(e.target.value)}
+                style={{ marginBottom: '20px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+            />
+            <button onClick={handleSaveChanges} style={{ backgroundColor: '#522B46', color: '#FFFFFF', padding: '10px 15px', border: 'none', borderRadius: '4px' }}>
+                Guardar cambios
+            </button>
+        </div>
+    </div>
+        )}
         </div>
     );
 }

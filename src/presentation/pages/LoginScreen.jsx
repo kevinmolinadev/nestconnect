@@ -48,7 +48,7 @@ function LoginScreen() {
   // A continuación, el contenido de la pantalla 'home' (pantalla de inicio)
   return (
     <div className="min-h-screen flex">
-      <header className="w-full bg-neutro-tertiary p-7 text-center text-white fixed top-0 left-0 right-0 z-10">
+      <header className="bg-neutro-tertiary p-7 text-center text-white fixed top-0 w-full z-10">
       </header>
       <div className="w-1/2" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       </div>
