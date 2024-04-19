@@ -33,7 +33,6 @@ function ChatScreen() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
         recognition.lang = 'es-ES';
-
         recognition.onstart = () => {
             setIsListening(true);
         };
@@ -64,6 +63,8 @@ function ChatScreen() {
         if (lastAssistantMessage) {
             const speech = new SpeechSynthesisUtterance(lastAssistantMessage.text);
             speech.lang = 'es-ES';
+            speech.voice = speechSynthesis.getVoices()[7];//cambio de voz 7 , 2
+            speech.rate = 1.2//velocidad de habala
             window.speechSynthesis.speak(speech);
         }
     };

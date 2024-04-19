@@ -6,8 +6,8 @@ import ItemsScreen from './pages/ItemsScreen';
 import FaqScreen from './pages/FaqScreen';
 import ProfileScreen from './pages/ProfileScreen';
 import HomeScreen from './pages/HomeScreen';
-import { UserIcon, HomeIcon, LoginIcon, ChatAlt2Icon, CalendarIcon, QuestionMarkCircleIcon } from '@heroicons/react/solid'; // Importa los iconos necesarios
-import logo from './assets/univallebarra.jpg'; // Asegúrate de que esta ruta es correcta
+import { UserIcon, HomeIcon, LoginIcon, ChatAlt2Icon, CalendarIcon, QuestionMarkCircleIcon } from '@heroicons/react/solid';
+import logo from './assets/univallebarra.jpg';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -27,9 +27,9 @@ function App() {
       case 'profilescreen':
         return <ProfileScreen onLogoutComplete={() => setCurrentScreen('home')} />;
       case 'home':
-        return <HomeScreen />; // El contenido de tu home
+        return <HomeScreen />;
       default:
-        return <div>Selecciona una opción</div>; // Mensaje por defecto
+        return <div>Selecciona una opción</div>;
     }
   };
 
@@ -41,24 +41,18 @@ function App() {
         <div className="px-4 mt-4 flex flex-col items-center">
           <img src={logo} alt="Logo" className="mb-4" />
           <div className="space-y-2 w-full">
-            <button onClick={() => setCurrentScreen('home')} className={`flex items-center justify-center py-2 px-4 ${isActive('home')} rounded border border-gray-400 w-3/4 mx-auto`}>
-              <HomeIcon className="h-5 w-5 mr-2" />Home
-            </button>
-            <button onClick={() => setCurrentScreen('login')} className={`flex items-center justify-center py-2 px-4 ${isActive('login')} rounded border border-gray-400 w-3/4 mx-auto`}>
-              <LoginIcon className="h-5 w-5 mr-2" />Iniciar Sesión
-            </button>
-            <button onClick={() => setCurrentScreen('chatscreen')} className={`flex items-center justify-center py-2 px-4 ${isActive('chatscreen')} rounded border border-gray-400 w-3/4 mx-auto`}>
-              <ChatAlt2Icon className="h-5 w-5 mr-2" />Chat Bot
-            </button>
-            <button onClick={() => setCurrentScreen('eventos')} className={`flex items-center justify-center py-2 px-4 ${isActive('eventos')} rounded border border-gray-400 w-3/4 mx-auto`}>
-              <CalendarIcon className="h-5 w-5 mr-2" />Eventos
-            </button>
-            <button onClick={() => setCurrentScreen('itemscreen')} className={`flex items-center justify-center py-2 px-4 ${isActive('itemscreen')} rounded border border-gray-400 w-3/4 mx-auto`}>
-              <QuestionMarkCircleIcon className="h-5 w-5 mr-2" />Objetos Perdidos
-            </button>
-            <button onClick={() => setCurrentScreen('faqscreen')} className={`flex items-center justify-center py-2 px-4 ${isActive('faqscreen')} rounded border border-gray-400 w-3/4 mx-auto`}>
-              <QuestionMarkCircleIcon className="h-5 w-5 mr-2" />FAQ
-            </button>
+            {[
+              { screen: 'home', icon: <HomeIcon className="h-5 w-5 mr-2" />, text: 'Home' },
+              { screen: 'login', icon: <LoginIcon className="h-5 w-5 mr-2" />, text: 'Iniciar Sesión' },
+              { screen: 'chatscreen', icon: <ChatAlt2Icon className="h-5 w-5 mr-2" />, text: 'Chat Bot' },
+              { screen: 'eventos', icon: <CalendarIcon className="h-5 w-5 mr-2" />, text: 'Eventos' },
+              { screen: 'itemscreen', icon: <QuestionMarkCircleIcon className="h-5 w-5 mr-2" />, text: 'Objetos Perdidos' },
+              { screen: 'faqscreen', icon: <QuestionMarkCircleIcon className="h-5 w-5 mr-2" />, text: 'FAQ' },
+            ].map(({ screen, icon, text }) => (
+              <button onClick={() => setCurrentScreen(screen)} className={`flex items-center justify-start py-2 px-4 ${isActive(screen)} rounded border border-gray-400 w-3/4 mx-auto`}>
+                {icon}<span className="ml-auto mr-auto">{text}</span>
+              </button>
+            ))}
           </div>
         </div>
         <div className="pb-4 px-4">

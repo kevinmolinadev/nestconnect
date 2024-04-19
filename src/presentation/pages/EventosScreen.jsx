@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import eventImage from '../assets/home.jpg'; // Asumiendo que todas las imágenes son esta por el momento
+import eventImage from '../assets/home.jpg'; // Asegúrate de que la ruta es correcta
 import Header from './Header';
 
 function EventosScreen() {
@@ -41,20 +41,24 @@ function EventosScreen() {
     };
 
     return (
-        <div className="bg-[#F4EFF3] min-h-screen p-4">
+        <div className="bg-gradient-to-br from-gray-200 to-gray-400 min-h-screen p-4">
             <Header pageTitle="EVENTOS" />
             <div className="container mx-auto py-4">
                 {selectedEvent ? (
-                    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-                        <div className="p-8">
-                            <h2 className="text-3xl font-bold mb-2">{selectedEvent.title}</h2>
-                            <p>{selectedEvent.description}</p>
-                            <img src={selectedEvent.image} alt={selectedEvent.title} className="w-full my-4" />
-                            <p><strong>Date:</strong> {selectedEvent.date}</p>
-                            <p><strong>Category:</strong> {selectedEvent.category}</p>
-                            <button onClick={handleClose} className="mt-4 bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded">
-                                Cerrar
-                            </button>
+                    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-200 bg-opacity-95">
+                        <div className="flex items-center justify-center min-h-screen">
+                            <div className="bg-white p-8 rounded-lg shadow-xl m-4 max-w-md w-full space-y-4">
+                                <h2 className="text-3xl font-bold text-[#522B46] mb-2">{selectedEvent.title}</h2>
+                                <p className="text-lg">{selectedEvent.description}</p>
+                                <img src={selectedEvent.image} alt={selectedEvent.title} className="max-h-40 w-auto object-cover rounded-lg shadow mx-auto" />
+                                <div className="text-sm mt-4">
+                                    <p><strong>Date:</strong> {selectedEvent.date}</p>
+                                    <p><strong>Category:</strong> {selectedEvent.category}</p>
+                                </div>
+                                <button onClick={handleClose} className="mt-4 bg-[#522B46] hover:bg-[#3e1f35] text-white py-2 px-4 rounded transition duration-300">
+                                    Cerrar
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ) : (
