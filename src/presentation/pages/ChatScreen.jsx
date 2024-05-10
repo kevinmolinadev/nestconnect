@@ -21,6 +21,8 @@ function ChatScreen() {
     const [userPhone, setUserPhone] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [chatUnlocked, setChatUnlocked] = useState(false);
+    const [interests, setInterests] = useState([]);
+
 
     const [showContactPopup, setShowContactPopup] = useState(false);
 
@@ -154,10 +156,21 @@ function ChatScreen() {
         const advisorNumbers = ["74169068", "77335220", "77335200", "62240222"];
         const formattedNumbers = advisorNumbers.map(num => `https://wa.me/591${num}`).join(", ");
         const message = `Aquí te dejo números para que te contactes con un asesor: ${formattedNumbers}`;
+        sendQuerry()
         setMessages(messages => [...messages, { from: 'assistant', text: message }]);
         setShowContactPopup(false);
     };
 
+    const sendQuerry=()=>{
+        const data = {
+            nombre:userName,
+            telefono:userPhone,
+            ["carreras de interes"]:interests.join(", ")
+        }
+        console.log(data);
+    }
+
+    const careers = ['Ingenieria', 'Medicina', 'Derecho', 'Arquitectura', 'Administración'];
     const handleSendMessage = () => {
         window.speechSynthesis.cancel();
         if (newMessage.trim()) {
@@ -182,26 +195,34 @@ function ChatScreen() {
                     }
                 };
                 typeWriter();
+
+
             });
             setNewMessage('');
+            let foundCareers = careers.filter(career => newMessage.toLowerCase().includes(career.toLowerCase()));
+        if (foundCareers.length > 0) {
+            setInterests(prev => [...new Set([...prev, ...foundCareers])]); 
         }
-    };
+    }
+};
 
+            
+        
     const handleNewMessageChange = (e) => {
         window.speechSynthesis.cancel();
         setNewMessage(e.target.value);
     };
 
     const renderMessage = (message) => {
-        // Detecta URLs que no estén seguidas de un paréntesis cerrado.
+        // Detecta URLs que no estén seguidas de un paréntesis cerrado o punto al final.
         const urlRegex = /(https?:\/\/[^\s]+?)(?=[,.)]?(?:\s|$))/g;
         const phoneRegex = /(\b\d{8}\b)/g;
-
+    
         // Dividir el texto en partes para procesar URLs y números de teléfono por separado
         return message.text.split(/(https?:\/\/[^\s]+|\b\d{8}\b)/g).map((part, index) => {
             if (urlRegex.test(part)) {
-                // Verifica si la parte es una URL y excluye paréntesis al final
-                const cleanPart = part.replace(/[)]$/, "");
+                // Extrae el enlace limpio
+                const cleanPart = part.match(urlRegex)[0];
                 return (
                     <a key={index} href={cleanPart} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                         {cleanPart}
@@ -214,7 +235,6 @@ function ChatScreen() {
                     <a key={index} href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                         {part}
                     </a>
-                    
                 );
             } else {
                 // Regresa el texto que no es ni URL ni teléfono como un span normal
@@ -222,6 +242,7 @@ function ChatScreen() {
             }
         });
     };
+
 
     const handleAssistantClick = () => {
         sessionStorage.setItem("chat", JSON.stringify(messages));
@@ -301,4 +322,4 @@ function ChatScreen() {
     );
 }
 
-export default ChatScreen;
+export default ChatScreen;  
