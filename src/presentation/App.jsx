@@ -6,11 +6,16 @@ import ItemsScreen from './pages/ItemsScreen';
 import FaqScreen from './pages/FaqScreen';
 import ProfileScreen from './pages/ProfileScreen';
 import HomeScreen from './pages/HomeScreen';
-import { UserIcon, HomeIcon, LoginIcon, ChatAlt2Icon, CalendarIcon, QuestionMarkCircleIcon } from '@heroicons/react/solid';
+import { UserIcon, HomeIcon, LoginIcon, ChatAlt2Icon, CalendarIcon, QuestionMarkCircleIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
 import logo from './assets/univallebarra.jpg';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Estado para manejar la visibilidad del sidebar
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen); // Cambiar el estado para ocultar/mostrar el sidebar
+  };
 
   const renderContent = () => {
     switch (currentScreen) {
@@ -37,7 +42,7 @@ function App() {
 
   return (
     <div className="flex h-screen">
-      <div className="w-1/5 bg-[#E4E1E4] flex flex-col justify-between">
+      <div className={`transition-width duration-300 ${isSidebarOpen ? 'w-1/5' : 'w-0'} bg-[#E4E1E4] overflow-hidden`}>
         <div className="px-4 mt-4 flex flex-col items-center">
           <img src={logo} alt="Logo" className="mb-4" />
           <div className="space-y-2 w-full">
@@ -55,13 +60,16 @@ function App() {
             ))}
           </div>
         </div>
-        <div className="pb-4 px-4">
-          <button onClick={() => setCurrentScreen('profilescreen')} className={`flex items-center justify-center py-2 px-4 ${isActive('profilescreen')} rounded border border-gray-400 w-3/4 mx-auto`}>
+        <div className="p-4">
+          <button onClick={() => setCurrentScreen('profilescreen')} className={`flex items-center justify-center py-2 px-4 ${isActive('profilescreen')} rounded border border-gray-400 w-full`}>
             <UserIcon className="h-5 w-5 mr-2" />Perfil
           </button>
         </div>
       </div>
-      <div className="flex-grow bg-gray-100 overflow-y-auto">
+      <button onClick={toggleSidebar} className={`absolute top-1/2 -translate-y-1/2 z-10 ${isSidebarOpen ? 'left-[16%]' : 'left-0'} transition-all duration-300`}>
+        {isSidebarOpen ? <ChevronLeftIcon className="h-8 w-8 text-gray-500" /> : <ChevronRightIcon className="h-10 w-10 text-gray-500" />}
+      </button>
+      <div className={`flex-grow overflow-y-auto transition-margin duration-300 ${isSidebarOpen }`}>
         {renderContent()}
       </div>
     </div>
@@ -69,4 +77,3 @@ function App() {
 }
 
 export default App;
-
