@@ -21,18 +21,17 @@ function ChatScreen() {
     const [userPhone, setUserPhone] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [chatUnlocked, setChatUnlocked] = useState(false);
+    const [isAnonymous, setIsAnonymous] = useState(true); // Variable para rastrear si el usuario es anónimo o no
+
     const [interests, setInterests] = useState([]);
-
-
-    const [showContactPopup, setShowContactPopup] = useState(false);
-
     
+    const [showContactPopup, setShowContactPopup] = useState(false);
+    const [showAdvisorContactForm, setShowAdvisorContactForm] = useState(false);
+    const [confirmationMessageVisible, setConfirmationMessageVisible] = useState(false);
 
-    const welcomeMessage = `Hola ${userName}, soy AVU. ¿En qué puedo ayudarte?`;
+    const welcomeMessage = isAnonymous ? "Hola Visitante, soy AVU. ¿En qué puedo ayudarte?" : `Hola ${userName}, soy AVU. ¿En qué puedo ayudarte?`;
 
     useEffect(() => {
-        const welcomeMessage = "Hola soy AVU, bienvenido. ¿En qué puedo ayudarte?";
-        
         let i = 0;
         const typeWriter = () => {
             if (i < welcomeMessage.length) {
@@ -43,14 +42,14 @@ function ChatScreen() {
             }
         };
         typeWriter();
-    }, []);
+    }, [welcomeMessage]);
 
     useEffect(() => {
-        if (chatUnlocked && userName) {
+        if (chatUnlocked && !isAnonymous) {
             const welcomeMessage = `Hola ${userName}, soy AVU. ¿En qué puedo ayudarte?`;
             setMessages([{ from: 'assistant', text: welcomeMessage }]);
         }
-    }, [chatUnlocked, userName]);
+    }, [chatUnlocked, userName, isAnonymous]);
 
     useEffect(() => {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -94,6 +93,19 @@ function ChatScreen() {
         return () => clearTimeout(inactivityTimer.current);
     }, [messages, helpMessageSent]);
 
+    useEffect(() => {
+        const savedChat = sessionStorage.getItem("chat");
+        if (savedChat) {
+            try {
+                const parsedChat = JSON.parse(savedChat);
+                setMessages(parsedChat);
+            } catch (error) {
+                console.error("Error al analizar el JSON del chat:", error);
+                setMessages([]);
+            }
+        }
+    }, []);
+
     const validatePhone = (phone) => {
         const pattern = /^[67][0-9]{7}$/; // Must start with 6 or 7 and have exactly 8 digits
         const repeatingPattern = /(.)\1{4}/; // Cannot have four identical consecutive digits
@@ -114,10 +126,15 @@ function ChatScreen() {
     };
 
     const unlockChat = () => {
-        const error = validatePhone(userPhone);
-        if (error) {
-            setPhoneError(error);
+        if (!userName && !userPhone) {
+            console.log("Ingresando en modo anónimo.");
+            setIsAnonymous(true);
+        } else if (!userName || !userPhone) {
+            console.log("Por favor, complete ambos campos del formulario.");
             return;
+        } else {
+            console.log("Ingresando con datos.");
+            setIsAnonymous(false);
         }
         setChatUnlocked(true);
         setShowPopup(false);
@@ -149,28 +166,49 @@ function ChatScreen() {
     useEffect(() => {
         setTimeout(() => {
             setShowContactPopup(true);
-        }, 40000); 
+        }, 10000); 
     }, []);
 
     const handleContactAdvisor = () => {
-        const advisorNumbers = ["74169068", "77335220", "77335200", "62240222"];
-        const formattedNumbers = advisorNumbers.map(num => `https://wa.me/591${num}`).join(", ");
-        const message = `Aquí te dejo números para que te contactes con un asesor: ${formattedNumbers}`;
-        sendQuerry()
-        setMessages(messages => [...messages, { from: 'assistant', text: message }]);
-        setShowContactPopup(false);
+        if (isAnonymous) {
+            setShowAdvisorContactForm(true);
+        } else {
+            const advisorNumbers = ["74169068", "77335220", "77335200", "62240222"];
+            const formattedNumbers = advisorNumbers.map(num => `https://wa.me/591${num}`).join(", ");
+            const message = `Aquí te dejo números para que te contactes con un asesor: ${formattedNumbers}`;
+            setMessages(messages => [...messages, { from: 'assistant', text: message }]);
+            setShowContactPopup(false);
+            sendQuerry()
+        }
     };
-
     const sendQuerry=()=>{
         const data = {
             nombre:userName,
             telefono:userPhone,
             ["carreras de interes"]:interests.join(", ")
         }
-        console.log(data);
-    }
 
+        console.log(data);
+
+        if (isAnonymous) {
+            setConfirmationMessageVisible(true);
+            setTimeout(() => setConfirmationMessageVisible(false), 3000);
+        }
+        // Asegúrate de que el popup no reaparezca
+    setShowContactPopup(false);
+    setShowAdvisorContactForm(false); // Asegura cerrar el formulario si está abierto
+    }
+    useEffect(() => {
+        if (isAnonymous && !showAdvisorContactForm) {
+            setTimeout(() => {
+                setShowContactPopup(true);
+            }, 10000);
+        }
+    }, [isAnonymous, showAdvisorContactForm]);
+    
     const careers = ['Ingenieria', 'Medicina', 'Derecho', 'Arquitectura', 'Administración'];
+
+    
     const handleSendMessage = () => {
         window.speechSynthesis.cancel();
         if (newMessage.trim()) {
@@ -257,14 +295,17 @@ function ChatScreen() {
                     <h2 className="text-xl font-bold mb-4">Desbloquear Chat</h2>
                     <div className="mb-4">
                         <label htmlFor="userName" className="block text-gray-700 font-bold mb-2">Nombre:</label>
-                        <input type="text" id="userName" className="p-2 w-full rounded-lg border border-black" value={userName} onChange={(e) => setUserName(e.target.value)} required />
+                        <input type="text" id="userName" className="p-2 w-full rounded-lg border border-black" value={userName} onChange={(e) => setUserName(e.target.value)} />
                     </div>
                     <div className="mb-4">
                         <label htmlFor="userPhone" className="block text-gray-700 font-bold mb-2">Número de Teléfono:</label>
-                        <input type="tel" id="userPhone" className="p-2 w-full rounded-lg border border-black" value={userPhone} onChange={handlePhoneChange} required />
+                        <input type="tel" id="userPhone" className="p-2 w-full rounded-lg border border-black" value={userPhone} onChange={handlePhoneChange} />
                         {phoneError && <div className="text-red-500 text-sm mt-2">{phoneError}</div>}
                     </div>
                     <button type="button" onClick={unlockChat} className="bg-neutro-primary text-white py-2 px-4 rounded-lg hover:animate-pulse">Desbloquear Chat</button>
+                    {!isAnonymous && (
+                        <div className="text-red-500 text-sm mt-2">Por favor complete ambos campos del formulario.</div>
+                    )}
                 </div>
             )}
             
@@ -309,15 +350,38 @@ function ChatScreen() {
                 </div>
             )}
             {showContactPopup && (
-            <div className="fixed right-4 top-4 bg-white p-4 shadow-lg rounded-lg">
-                <h2 className="font-bold text-lg">Contactar Asesor</h2>
-                <p>¿Deseas hablar con un asesor ahora?</p>
-                <button onClick={handleContactAdvisor} className="bg-neutro-tertiary text-white p-2 rounded hover:bg-gray-400 mt-2">
-                    Contactar Asesor
-                </button>
+                <div className="fixed right-4 top-4 bg-white p-4 shadow-lg rounded-lg">
+                    <h2 className="font-bold text-lg">Contactar Asesor</h2>
+                    <p>¿Deseas hablar con un asesor ahora?</p>
+                    <button onClick={handleContactAdvisor} className="bg-neutro-tertiary text-white p-2 rounded hover:bg-gray-400 mt-2">
+                        {isAnonymous ? 'Enviar formulario' : 'Contactar Asesor'}
+                    </button>
+                </div>
+            )}
+            {showAdvisorContactForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                <h2 className="text-xl font-bold mb-4">Formulario de Contacto</h2>
+                <div>
+                    <label htmlFor="contactName" className="block text-gray-700 font-bold mb-2">Nombre:</label>
+                    <input type="text" id="contactName" className="p-2 w-full rounded-lg border border-black" value={userName} onChange={(e) => setUserName(e.target.value)} />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="contactPhone" className="block text-gray-700 font-bold mb-2">Número de Teléfono:</label>
+                    <input type="tel" id="contactPhone" className="p-2 w-full rounded-lg border border-black" value={userPhone} onChange={handlePhoneChange} />
+                    {phoneError && <div className="text-red-500 text-sm mt-2">{phoneError}</div>}
+                </div>
+                <button type="button" onClick={() => { setShowAdvisorContactForm(false); sendQuerry(); }} className="bg-neutro-primary text-white py-2 px-4 rounded-lg hover:animate-pulse">Enviar</button>
+                <button type="button" onClick={() => setShowAdvisorContactForm(false)} className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:animate-pulse ml-4">Cancelar</button>
             </div>
-        )}
-            
+        </div>
+    )}
+
+    {confirmationMessageVisible && (
+        <div className="fixed bottom-10 right-10 bg-neutro-tertiary text-white p-4 rounded-lg">
+            Gracias por rellenar el formulario, un asesor se contactará contigo.
+        </div>
+    )}
         </div>
     );
 }
