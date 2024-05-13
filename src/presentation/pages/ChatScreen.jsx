@@ -107,23 +107,37 @@ function ChatScreen() {
     }, []);
 
     const validatePhone = (phone) => {
-        const pattern = /^[67][0-9]{7}$/; // Must start with 6 or 7 and have exactly 8 digits
-        const repeatingPattern = /(.)\1{4}/; // Cannot have four identical consecutive digits
-        if (!pattern.test(phone)) {
+        if (phone.length !== 8) {
             return "El número debe tener 8 dígitos.";
         }
-        if (repeatingPattern.test(phone)) {
-            return "El número no puede tener cinco dígitos iguales consecutivos.";
+        if (/^[67][0-9]{7}$/.test(phone)) {
+            return ""; 
         }
-        return "";
+        return "Número inválido. Debe comenzar con 6 o 7 y contener 8 dígitos.";
     };
+    
 
     const handlePhoneChange = (e) => {
         const phone = e.target.value;
-        setUserPhone(phone);
-        const error = validatePhone(phone);
-        setPhoneError(error);
+        if (/^[0-9]*$/.test(phone)) {
+            setUserPhone(phone);
+            const error = validatePhone(phone);
+            setPhoneError(error);
+        } else {
+            setPhoneError("Por favor, introduce solo números validos.");
+        }
     };
+    const handleNameChange = (e) => {
+        const name = e.target.value;
+        if (/^[a-zA-Z\s]*$/.test(name)) {
+            setUserName(name);
+        } else {
+            // Establecer error si se intenta introducir un valor no numérico
+            setPhoneError("Por favor, introduce solo Nombre valido.");
+        }
+    };
+    
+    
 
     const unlockChat = () => {
         if (!userName && !userPhone) {
@@ -166,7 +180,7 @@ function ChatScreen() {
     useEffect(() => {
         setTimeout(() => {
             setShowContactPopup(true);
-        }, 10000); 
+        }, 30000); 
     }, []);
 
     const handleContactAdvisor = () => {
@@ -294,9 +308,10 @@ function ChatScreen() {
                 <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
                     <h2 className="text-xl font-bold mb-4">Desbloquear Chat</h2>
                     <div className="mb-4">
-                        <label htmlFor="userName" className="block text-gray-700 font-bold mb-2">Nombre:</label>
-                        <input type="text" id="userName" className="p-2 w-full rounded-lg border border-black" value={userName} onChange={(e) => setUserName(e.target.value)} />
-                    </div>
+    <label htmlFor="userName" className="block text-gray-700 font-bold mb-2">Nombre:</label>
+    <input type="text" id="userName" className="p-2 w-full rounded-lg border border-black" value={userName} onChange={handleNameChange} />
+</div>
+
                     <div className="mb-4">
                         <label htmlFor="userPhone" className="block text-gray-700 font-bold mb-2">Número de Teléfono:</label>
                         <input type="tel" id="userPhone" className="p-2 w-full rounded-lg border border-black" value={userPhone} onChange={handlePhoneChange} />
@@ -362,10 +377,11 @@ function ChatScreen() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                 <h2 className="text-xl font-bold mb-4">Formulario de Contacto</h2>
-                <div>
-                    <label htmlFor="contactName" className="block text-gray-700 font-bold mb-2">Nombre:</label>
-                    <input type="text" id="contactName" className="p-2 w-full rounded-lg border border-black" value={userName} onChange={(e) => setUserName(e.target.value)} />
-                </div>
+                <div className="mb-4">
+    <label htmlFor="userName" className="block text-gray-700 font-bold mb-2">Nombre:</label>
+    <input type="text" id="userName" className="p-2 w-full rounded-lg border border-black" value={userName} onChange={handleNameChange} />
+</div>
+
                 <div className="mb-4">
                     <label htmlFor="contactPhone" className="block text-gray-700 font-bold mb-2">Número de Teléfono:</label>
                     <input type="tel" id="contactPhone" className="p-2 w-full rounded-lg border border-black" value={userPhone} onChange={handlePhoneChange} />
