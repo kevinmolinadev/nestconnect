@@ -4,6 +4,7 @@ import Body from "../pages/home/views/body";
 import Chat from "../components/chat";
 import Login from "../pages/home/views/login";
 import ForgotPassword from "../components/forgot-password";
+import Dashboard from "../pages/dashboard/dashboard";
 
 export const router = createBrowserRouter([
     {
@@ -32,11 +33,17 @@ export const router = createBrowserRouter([
             },
             {
                 path: "/:id"
-            }
+            },
+           
         ]
     },
     {
         path: ":section",
+    },
+    
+    {
+        path: "/dashboard",
+        element:<Dashboard/>
     }
 
 
