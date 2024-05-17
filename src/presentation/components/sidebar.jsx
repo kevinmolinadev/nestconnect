@@ -1,4 +1,4 @@
-import { ChevronFirst, ChevronLast, MoreVertical, Edit, Trash2 } from "lucide-react";
+import { ChevronFirst, ChevronLast, Edit, Trash2 } from "lucide-react";
 import logo from "../assets/logo.png";
 import profile from "../assets/profile.png";
 import { createContext, useContext, useState } from "react";
@@ -31,9 +31,8 @@ export default function SideBar({ children }) {
           <div className="p-4 pb-2 flex justify-between items-center">
             <img
               src={logo}
-              className={`overflow-hidden transition-all ${
-                expanded ? "w-32" : "w-0"
-              }`}
+              className={`overflow-hidden transition-all ${expanded ? "w-32" : "w-0"
+                }`}
             />
             <button
               onClick={() => setExpanded((curr) => !curr)}
@@ -85,11 +84,10 @@ export function SideBarItem({ icon, text, alert }) {
 
   return (
     <li
-      className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
-        text === activeItem
+      className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${text === activeItem
           ? "bg-gradient-to-tr from-neutro-tertiary 200 to-neutro-tertiary 100 text-white"
           : "hover:bg-neutro-tertiary/40 text-gray-primary 600"
-      }`}
+        }`}
       onClick={() => handleMenuClick(text)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -100,17 +98,15 @@ export function SideBarItem({ icon, text, alert }) {
         icon
       )}
       <span
-        className={`overflow-hidden transition-all ${
-          expanded ? "w-52 ml-3" : "w-0"
-        } ${text === activeItem ? "text-white" : ""}`}
+        className={`overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"
+          } ${text === activeItem ? "text-white" : ""}`}
       >
         {text}
       </span>
       {text === activeItem && (
         <div
-          className={`absolute right-2 w-2 h-2 rounded bg-white ${
-            expanded ? "" : "top-2"
-          }`}
+          className={`absolute right-2 w-2 h-2 rounded bg-white ${expanded ? "" : "top-2"
+            }`}
         ></div>
       )}
       {!expanded && isHovered && (
@@ -181,9 +177,8 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
             type="button"
             onClick={handleRemoveImage}
             disabled={isDefaultImage}
-            className={`absolute bottom-0 left-0 bg-white border border-gray-300 rounded-full p-1 cursor-pointer ${
-              isDefaultImage ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`absolute bottom-0 left-0 bg-white border border-gray-300 rounded-full p-1 cursor-pointer ${isDefaultImage ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
             <Trash2 size={16} />
           </button>

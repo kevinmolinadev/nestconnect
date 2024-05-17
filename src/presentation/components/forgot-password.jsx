@@ -1,27 +1,30 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Home from "../assets/home/home.jpg"
 import { AuthService } from "../../infraestructure";
 import VerificationCode from "./verification-code";
 import { useMutation } from "@tanstack/react-query";
+import { ErrorContext } from "../context/error";
 
 const ForgotPassword = () => {
 
   const [email, setEmail] = useState("");
+  const { updateError } = useContext(ErrorContext)
   const sendData = useMutation({ mutationFn: (email) => AuthService.sendResetPasswordCode({ email }) })
+
+  useEffect(() => {
+    if (sendData.isError) updateError(sendData.error.message);
+  }, [sendData.isError])
 
   const handleValue = (e) => {
     setEmail(e.target.value.trim())
   }
-
 
   const handleSend = async (e) => {
     e.preventDefault();
     sendData.mutate(email);
   };
 
-  if (sendData.isSuccess) return <VerificationCode />
-
-  if (sendData.isError) console.log(sendData.error.message);  
+  if (sendData.isSuccess) return <VerificationCode type="reset-password" />
 
   return (
     <div className="flex items-center justify-center relative flex-grow bg-gray-900" style={{ backgroundImage: `url(${Home})`, backgroundSize: 'cover', backgroundPosition: 'top' }}>
@@ -36,7 +39,6 @@ const ForgotPassword = () => {
           <button className="bg-neutro-tertiary text-white w-full p-3 rounded-md transition duration-300 mt-4">Enviar</button>
         </form>
       </div>
-
     </div>
   )
 }

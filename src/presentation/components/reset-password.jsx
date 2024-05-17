@@ -1,16 +1,25 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Home from "../assets/home/home.jpg";
 import { useMutation } from '@tanstack/react-query';
 import { AuthService } from '../../infraestructure';
 import { Navigate } from 'react-router-dom';
+import { ErrorContext } from '../context/error';
 
 function ResetPassword() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const { updateError } = useContext(ErrorContext);
   const [error, setError] = useState(null)
 
   const fetchData = useMutation({ mutationFn: (password) => AuthService.sendNewPassword({ password }) })
 
+  useEffect(() => {
+    if (fetchData.isError) updateError(fetchData.error.message);
+  }, [fetchData.isError])
+
+  useEffect(() => {
+    if (error) updateError(error)
+  }, [error])
 
   const handleResetPassword = async (e) => {
     setError(null)
@@ -43,7 +52,6 @@ function ResetPassword() {
             </button>
           </div>
         </form>
-        {(error || fetchData.error) && <p className="text-red-500 text-center mt-4">{error || fetchData.error.message}</p>}
       </div>
     </div>
   );

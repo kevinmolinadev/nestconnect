@@ -1,17 +1,16 @@
 import { IoMenu, IoClose, IoLayers } from "react-icons/io5";
-
 import { Link, useResolvedPath } from "react-router-dom";
-import Logo from "./logo"
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SectionService } from "../../infraestructure";
-const Header = ({ isSticky, handleRequest }) => {
+import { useState } from "react";
+import Logo from "./logo"
+const Header = ({ isSticky, isSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { pathname } = useResolvedPath()
-    const { data } = useQuery({ queryKey: ["sections", "visitor"], queryFn: SectionService.getAll, enabled: handleRequest });
+    const { data } = useQuery({ queryKey: ["sections", "visitor"], queryFn: SectionService.getAll, enabled: isSuccess });
 
     const handleMenu = () => {
-        if(window.innerWidth <= 1024){
+        if (window.innerWidth <= 1024) {
             setIsOpen(!isOpen)
         }
     }

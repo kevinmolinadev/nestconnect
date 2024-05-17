@@ -1,26 +1,40 @@
-import { LayoutDashboard, Home, StickyNote, Layers, Flag, Calendar, LifeBuoy, Settings } from "lucide-react";
+import { Home, LifeBuoy, Settings, SquareLibrary } from "lucide-react";
 import SideBar, { SideBarItem } from "../../components/sidebar";
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { UserContext } from "../../context/user";
 
 const Dashboard = () => {
+    const { user } = useContext(UserContext);
+    if (!user) return <Navigate to="/" />
+
+    const data = [
+        {
+            icon: <SquareLibrary size={20} />,
+            text: "Home"
+        },
+        {
+            icon: <Home size={20} />,
+            text: "Objetos Perdidos"
+        },
+        {
+            icon: <Home size={20} />,
+            text: "Casita"
+        },
+        {
+            icon: <Home size={20} />,
+            text: "Miguel"
+        },
+    ]
     return (
-    <>
         <div className="flex">
             <SideBar>
-                <SideBarItem icon= {<Home size={20}/>} text="Home" alert/>
-                <SideBarItem icon= {<LayoutDashboard size={20}/>} text="Dashboard" active/>
-                <SideBarItem icon= {<StickyNote size={20} />} text= "Projects" alert/> 
-                <SideBarItem icon= {<Calendar size={20}/>} text= "Calendar"/> 
-                <SideBarItem icon= {<Layers size={20}/>} text= "Tasks"/>
-                <SideBarItem icon= {<Flag size={20}/>} text= "Reporting"/>
-                <hr className="my-3"/>
-                <SideBarItem icon= {<Settings size={20}/>} text= "Settings"/>
-                <SideBarItem icon= {<LifeBuoy size={20}/>} text= "Help"/>
+                {data.map((item, index) => <SideBarItem key={index} icon={item.icon} text={item.text} />)}
+                <hr className="my-3" />
+                <SideBarItem icon={<Settings size={20} />} text="Settings" />
+                <SideBarItem icon={<LifeBuoy size={20} />} text="Help" />
             </SideBar>
-            
         </div>
-        
-    </>
-        
     )
 }
 export default Dashboard;

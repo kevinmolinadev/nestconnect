@@ -5,6 +5,8 @@ import Chat from "../components/chat";
 import Login from "../pages/home/views/login";
 import ForgotPassword from "../components/forgot-password";
 import Dashboard from "../pages/dashboard/dashboard";
+import SignUp from "../pages/home/views/signup";
+import NotFound from "../pages/404";
 
 export const router = createBrowserRouter([
     {
@@ -25,27 +27,21 @@ export const router = createBrowserRouter([
             },
             {
                 path: "/signup",
-                element: <div>TODO:create page</div>
+                element: <SignUp />
             },
             {
                 path: "/forgot-password",
                 element: <ForgotPassword />
             },
-            {
-                path: "/:id"
-            },
-           
         ]
     },
     {
-        path: ":section",
-    },
-    
-    {
         path: "/dashboard",
-        element:<Dashboard/>
+        element: <Dashboard />
+    },
+    {
+        path: "*",
+        element: <NotFound />
     }
-
-
 ])
 
