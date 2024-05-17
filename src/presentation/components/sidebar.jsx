@@ -31,8 +31,9 @@ export default function SideBar({ children }) {
           <div className="p-4 pb-2 flex justify-between items-center">
             <img
               src={logo}
-              className={`overflow-hidden transition-all ${expanded ? "w-32" : "w-0"
-                }`}
+              className={`overflow-hidden  transition-all ${
+                expanded ? "w-52" : "w-0"
+              }`}
             />
             <button
               onClick={() => setExpanded((curr) => !curr)}
@@ -82,13 +83,20 @@ export function SideBarItem({ icon, text, alert }) {
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
   return (
     <li
       className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${text === activeItem
           ? "bg-gradient-to-tr from-neutro-tertiary 200 to-neutro-tertiary 100 text-white"
           : "hover:bg-neutro-tertiary/40 text-gray-primary 600"
-        }`}
-      onClick={() => handleMenuClick(text)}
+      }`}
+      onClick={() => {
+        handleMenuClick(text);
+        if (isMobile) {
+          setIsHovered(false); // Ocultar el tooltip al hacer clic en dispositivos móviles
+        }
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -103,13 +111,7 @@ export function SideBarItem({ icon, text, alert }) {
       >
         {text}
       </span>
-      {text === activeItem && (
-        <div
-          className={`absolute right-2 w-2 h-2 rounded bg-white ${expanded ? "" : "top-2"
-            }`}
-        ></div>
-      )}
-      {!expanded && isHovered && (
+      {!expanded && !isMobile && isHovered && (
         <div
           className={`absolute left-full rounded-md px-2 py-1 ml-6 bg-neutro-tertiary/40 text-white text-sm`}
         >
