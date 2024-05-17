@@ -12,6 +12,7 @@ const Home = () => {
         <>
             <div className="flex flex-col min-h-dvh">
                 <Header isSticky={true} handleReques={query.isSuccess} />
+                
                 <Outlet />
                 <Footer />
             </div>
