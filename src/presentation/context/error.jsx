@@ -6,7 +6,7 @@ export const ErrorContext = createContext(null);
 export const ErrorProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const updateError = (message) => {
-        setError(message);
+        setError(message)
     };
 
     useEffect(() => {

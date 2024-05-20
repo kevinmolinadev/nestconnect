@@ -3,9 +3,12 @@ import Footer from "../../components/footer";
 import { useQuery } from "@tanstack/react-query";
 import { AuthService } from "../../../infraestructure";
 import { Outlet } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../../context/user";
 
 const Home = () => {
-    const query = useQuery({ queryKey: ["visitor"], queryFn: AuthService.visitor, staleTime: 10 * 60 * 1000 });
+    const { user } = useContext(UserContext);
+    const query = useQuery({ queryKey: ["visitor"], queryFn: AuthService.visitor, staleTime: 10 * 60 * 1000, enabled: !user });
     return (
         <>
             <div className="flex flex-col min-h-dvh">

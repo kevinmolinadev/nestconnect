@@ -2,16 +2,17 @@ import { ChevronFirst, ChevronLast, Edit, Trash2 } from "lucide-react";
 import logo from "../assets/logo.png";
 import profile from "../assets/profile.png";
 import { createContext, useContext, useState } from "react";
+import { UserContext } from "../context/user"
+import { UploadService } from "../../infraestructure/services/upload";
 
 const SidebarContext = createContext();
 
 export default function SideBar({ children }) {
+  const { user } = useContext(UserContext)
   const [expanded, setExpanded] = useState(true);
   const [activeItem, setActiveItem] = useState("Home");
   const [profileData, setProfileData] = useState({
-    name: "Luis Enrique",
-    surname: "Padilla",
-    email: "luispadillarandia@gmail.com",
+    ...user,
     image: profile,
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,9 +32,8 @@ export default function SideBar({ children }) {
           <div className="p-4 pb-2 flex justify-between items-center">
             <img
               src={logo}
-              className={`overflow-hidden  transition-all ${
-                expanded ? "w-52" : "w-0"
-              }`}
+              className={`overflow-hidden  transition-all ${expanded ? "w-52" : "w-0"
+                }`}
             />
             <button
               onClick={() => setExpanded((curr) => !curr)}
@@ -88,9 +88,9 @@ export function SideBarItem({ icon, text, alert }) {
   return (
     <li
       className={`relative flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${text === activeItem
-          ? "bg-gradient-to-tr from-neutro-tertiary 200 to-neutro-tertiary 100 text-white"
-          : "hover:bg-neutro-tertiary/40 text-gray-primary 600"
-      }`}
+        ? "bg-gradient-to-tr from-neutro-tertiary 200 to-neutro-tertiary 100 text-white"
+        : "hover:bg-neutro-tertiary/40 text-gray-primary 600"
+        }`}
       onClick={() => {
         handleMenuClick(text);
         if (isMobile) {
@@ -124,11 +124,17 @@ export function SideBarItem({ icon, text, alert }) {
 
 function ProfileModal({ profileData, setProfileData, closeModal }) {
   const [formData, setFormData] = useState(profileData);
+  const { user } = useContext(UserContext)
+  console.log(user)
+  const [uploadFile, setUploadFile] = useState(null);
   const isDefaultImage = formData.image === profile;
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
     if (name === "image") {
+      console.log(files[0].name)
+      const { url } = await UploadService.getURL({ folder: `user/${user.id}`, name: files[0].name, type: files[0].type })
+      setUploadFile({ url, file: files[0] });
       setFormData({
         ...formData,
         [name]: URL.createObjectURL(files[0]),
@@ -141,8 +147,9 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await UploadService.upload(uploadFile.url, uploadFile.file)
     setProfileData(formData);
     closeModal();
   };
@@ -150,7 +157,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
   const handleRemoveImage = () => {
     setFormData({
       ...formData,
-      image: profile, // Set to default image
+      image: profile,
     });
   };
 

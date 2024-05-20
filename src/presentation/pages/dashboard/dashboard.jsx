@@ -1,4 +1,4 @@
-import { Home, LifeBuoy, Settings, SquareLibrary } from "lucide-react";
+import { LifeBuoy, Settings, SquareLibrary } from "lucide-react";
 import SideBar, { SideBarItem } from "../../components/sidebar";
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
@@ -11,19 +11,11 @@ const Dashboard = () => {
     const data = [
         {
             icon: <SquareLibrary size={20} />,
-            text: "Home"
+            text: "Eventos"
         },
         {
-            icon: <Home size={20} />,
+            icon: <SquareLibrary size={20} />,
             text: "Objetos Perdidos"
-        },
-        {
-            icon: <Home size={20} />,
-            text: "Casita"
-        },
-        {
-            icon: <Home size={20} />,
-            text: "Miguel"
         },
     ]
     return (

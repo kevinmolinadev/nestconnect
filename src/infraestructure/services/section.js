@@ -4,6 +4,9 @@ export const SectionService = {
     getAll: () => {
         return HandleRequest.get(SECTIONS);
     },
+    getTypes: () => {
+        return HandleRequest.get(`${SECTIONS}/types`);
+    },
     getById: (id) => {
         return HandleRequest.get(`${SECTIONS}/${id}`)
     },
