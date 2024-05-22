@@ -4,9 +4,11 @@ import Home from "../../../assets/home/home.jpg"
 import { AuthService, CampusService } from "../../../../infraestructure";
 import VerificationCode from "../../../components/verification-code";
 import { ErrorContext } from "../../../context/error";
+import { UserContext } from "../../../context/user";
 
 const SignUp = () => {
     const { updateError } = useContext(ErrorContext);
+    const { updateUser } = useContext(UserContext);
     const [name, setName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -21,7 +23,10 @@ const SignUp = () => {
         if (fectData.isSuccess) setCampusData(fectData.data);
     }, [fectData.isSuccess])
 
-    if (sendData.isSuccess) return <VerificationCode type="validation" />
+    if (sendData.isSuccess) {
+        updateUser(sendData.data);
+        return <VerificationCode type="validation" />;
+    }
 
     const handleRegister = async (e) => {
         e.preventDefault();

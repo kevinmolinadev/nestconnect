@@ -33,3 +33,21 @@
 .fade-out {
     animation: fadeOut 0.3s ease-in-out both;
 }
+
+.section-list *:is(tr, th, td) {
+    text-align: left;
+    padding: 0.5rem;
+}
+
+.section-list>thead>tr>th {
+    font-size: clamp(0.6rem, 1.2vw, 1rem);
+}
+
+.section-list>tbody>tr {
+    border: 1px solid #000;
+    border-inline: none;
+}
+
+.section-list>tbody>tr>td {
+    font-size: clamp(0.3rem, 1vw, 15px);
+}

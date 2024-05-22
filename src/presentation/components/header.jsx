@@ -7,14 +7,14 @@ import Logo from "./logo"
 const Header = ({ isSticky, isSuccess }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { pathname } = useResolvedPath()
-    const { data } = useQuery({ queryKey: ["sections", "visitor"], queryFn: SectionService.getAll, enabled: isSuccess });
+    const { data } = useQuery({ queryKey: ["sections"], queryFn: SectionService.getAll, enabled: isSuccess });
 
     const handleMenu = () => {
         if (window.innerWidth <= 1024) {
             setIsOpen(!isOpen)
         }
     }
-
+    console.log(data)
     return (
         <header className={` bg-neutro-tertiary text-white ${isSticky ? "sticky top-0 z-50" : ""}`}>
             <div className="m-auto flex items-center p-2 md:p-3 md:w-11/12 lg:p-3.5 lg:w-9/12">
@@ -25,9 +25,9 @@ const Header = ({ isSticky, isSuccess }) => {
                         <nav className="max-lg:order-1 max-lg:p-2 flex-grow">
                             <ul className="max-lg:flex-col max-lg:w-full max-lg:items-start max-lg:justify-start max-lg:pl-2 flex flex-grow justify-end items-center w-full h-full">
                                 {
-                                    (data && data.lenght > 0) && (
-                                        data.map((item) => <li key={item.id} className="max-lg:flex max-lg:items-center max-lg:gap-2">
-                                            <Link className="max-lg:py-2 max-lg:text-[17px] md:px-2 lg:px-4 inline-block" to={item.id}>{item.name}</Link>
+                                    data && (
+                                        data.data.map((item) => <li key={item.id} className="max-lg:flex max-lg:items-center max-lg:gap-2">
+                                            <Link className="max-lg:py-2 max-lg:text-[17px] md:px-2 lg:px-4 inline-block" to={item.name}>{item.name}</Link>
                                             <IoLayers className="max-lg:inline hidden text-2xl" />
                                         </li>)
                                     )

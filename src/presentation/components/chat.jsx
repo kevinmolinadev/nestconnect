@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { SendHorizonal, Mic, MicOff, Volume2, CirclePause } from "lucide-react";
 import { ErrorContext } from "../context/error"
-import { ChatService, SectionService } from "../../infraestructure";
+import { ChatService } from "../../infraestructure";
 import { RiRobot3Fill } from "react-icons/ri";
 
 const Chat = () => {
@@ -177,7 +177,7 @@ const Chat = () => {
         }
     };
 
-    
+
     const sendAdvisorts = () => {
         ChatService.answerQuestion({ question: "Quiero contactar a un asesor" }).then(res => {
             setIsTyping(false);
@@ -309,10 +309,10 @@ const Chat = () => {
                         const speech = new SpeechSynthesisUtterance(textFragments[currentFragment]);
                         speech.lang = 'es-ES';
                         speech.rate = 1.2;
+                        const voices = window.speechSynthesis.getVoices().filter(item => item.lang === "es-ES");
+                        speech.voice = voices.find(voice => voice.name === "Google español") ?? voices[4];
 
                         const setVoice = () => {
-                            const voices = window.speechSynthesis.getVoices();
-                            speech.voice = voices[7];
                             window.speechSynthesis.speak(speech);
                         };
 

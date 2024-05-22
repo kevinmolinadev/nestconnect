@@ -10,7 +10,7 @@ import Exchange from '../../../assets/home/exchange.png';
 const Body = () => {
     return (
         <>
-            <section className="flex relative h-[72vh] lg:h-[90vh] items-center">
+            <section className="flex relative h-[72vh] lg:h-[91vh] items-center">
                 <div className="absolute h-full w-full">
                     <img className="object-cover h-full w-full brightness-50 object-right" src={IMGHome} alt="home" />
                 </div>

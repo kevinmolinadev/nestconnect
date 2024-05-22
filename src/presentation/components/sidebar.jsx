@@ -1,25 +1,30 @@
 import { ChevronFirst, ChevronLast, Edit, Trash2 } from "lucide-react";
 import logo from "../assets/logo.png";
-import profile from "../assets/profile.png";
 import { createContext, useContext, useState } from "react";
 import { UserContext } from "../context/user"
 import { UploadService } from "../../infraestructure/services/upload";
+import ProfileDefault from "./profile-default";
+import { useNavigate } from "react-router-dom";
+import { SectionContext } from "../context/section";
 
 const SidebarContext = createContext();
 
 export default function SideBar({ children }) {
   const { user } = useContext(UserContext)
+  const { updateSection } = useContext(SectionContext)
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(true);
   const [activeItem, setActiveItem] = useState("Home");
-  const [profileData, setProfileData] = useState({
-    ...user,
-    image: profile,
-  });
+  const [profileData, setProfileData] = useState(user);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleMenuClick = (itemName) => {
-    console.log(`Clicked on ${itemName}`);
-    setActiveItem(itemName);
+  const handleMenuClick = (item) => {
+    console.log(`Clicked on ${item.name}`);
+    if (item.id) {
+      updateSection(item);
+      navigate(`${item.name}`)
+    }
+    setActiveItem(item.name);
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -49,17 +54,19 @@ export default function SideBar({ children }) {
             className={`border-t flex items-center p-4 cursor-pointer relative ${expanded ? 'flex-col' : 'justify-center'}`}
             onClick={openModal}
           >
-            <img src={profileData.image} className="w-10 h-10 rounded-full" />
+            <div className="w-10 h-10 rounded-full overflow-hidden">
+              {profileData.image_url ? <img src={profileData.image_url} className="w-full h-full object-cover" alt="Profile" /> : <ProfileDefault name={profileData.name} />}
+            </div>
             {!expanded && (
               <div className="absolute left-full rounded-md px-2 py-1 ml-6 bg-neutro-tertiary/40 text-white text-sm invisible opacity-0 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0">
                 <span className="block">{profileData.email}</span>
-                <span className="block">{profileData.name} {profileData.surname}</span>
+                <span className="block">{profileData.name} {profileData.last_name}</span>
               </div>
             )}
             {expanded && (
               <div className="mt-2 text-center">
                 <span className="block text-xs text-gray-600">{profileData.email}</span>
-                <h4 className="font-semibold">{profileData.name} {profileData.surname}</h4>
+                <h4 className="font-semibold">{profileData.name} {profileData.last_name}</h4>
               </div>
             )}
           </div>
@@ -76,7 +83,7 @@ export default function SideBar({ children }) {
   );
 }
 
-export function SideBarItem({ icon, text, alert }) {
+export function SideBarItem({ icon, context, text, alert }) {
   const { expanded, handleMenuClick, activeItem } = useContext(SidebarContext);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -92,7 +99,7 @@ export function SideBarItem({ icon, text, alert }) {
         : "hover:bg-neutro-tertiary/40 text-gray-primary 600"
         }`}
       onClick={() => {
-        handleMenuClick(text);
+        handleMenuClick(context || { name: text });
         if (isMobile) {
           setIsHovered(false); // Ocultar el tooltip al hacer clic en dispositivos móviles
         }
@@ -124,16 +131,14 @@ export function SideBarItem({ icon, text, alert }) {
 
 function ProfileModal({ profileData, setProfileData, closeModal }) {
   const [formData, setFormData] = useState(profileData);
-  const { user } = useContext(UserContext)
-  console.log(user)
   const [uploadFile, setUploadFile] = useState(null);
-  const isDefaultImage = formData.image === profile;
+  const isDefaultImage = formData.image_url === null;
 
   const handleChange = async (e) => {
     const { name, value, files } = e.target;
-    if (name === "image") {
-      console.log(files[0].name)
-      const { url } = await UploadService.getURL({ folder: `user/${user.id}`, name: files[0].name, type: files[0].type })
+    if (name === "image_url") {
+      console.log(formData)
+      const { url } = await UploadService.getURL({ folder: `users/${formData.id}/profile`, name: files[0].name, type: files[0].type })
       setUploadFile({ url, file: files[0] });
       setFormData({
         ...formData,
@@ -149,7 +154,8 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await UploadService.upload(uploadFile.url, uploadFile.file)
+    const url = await UploadService.upload(uploadFile.url, uploadFile.file)
+
     setProfileData(formData);
     closeModal();
   };
@@ -157,7 +163,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
   const handleRemoveImage = () => {
     setFormData({
       ...formData,
-      image: profile,
+      image_url: null,
     });
   };
 
@@ -166,17 +172,15 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl mb-4 text-center">Editar Perfil</h2>
         <div className="text-center mb-4 relative">
-          <img
-            src={formData.image}
-            alt="Profile"
-            className="w-24 h-24 rounded-full mx-auto"
-          />
+          <div className="w-24 h-24 rounded-full mx-auto overflow-hidden">
+            {formData.image_url ? <img src={formData.image_url} className="w-full h-full object-cover" alt="Profile" /> : <ProfileDefault name={formData.name} />}
+          </div>
           <label htmlFor="image" className="absolute bottom-0 right-0 bg-white border border-gray-300 rounded-full p-1 cursor-pointer">
             <Edit size={16} />
             <input
               type="file"
               id="image"
-              name="image"
+              name="image_url"
               accept="image/*"
               onChange={handleChange}
               className="hidden"
@@ -192,7 +196,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
             <Trash2 size={16} />
           </button>
         </div>
-        <h4 className="font-semibold text-center mb-4">¡Hola, {formData.name} {formData.surname}!</h4>
+        <h4 className="font-semibold text-center mb-4">¡Hola, {formData.name} {formData.last_name}!</h4>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="mb-4">
             <label className="block mb-1">Nombre</label>
@@ -208,8 +212,8 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
             <label className="block mb-1">Apellido</label>
             <input
               type="text"
-              name="surname"
-              value={formData.surname}
+              name="last_name"
+              value={formData.last_name}
               onChange={handleChange}
               className="w-full border px-4 py-2 rounded-lg"
             />

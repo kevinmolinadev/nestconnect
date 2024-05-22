@@ -10,6 +10,9 @@ export const SectionService = {
     getById: (id) => {
         return HandleRequest.get(`${SECTIONS}/${id}`)
     },
+    getRecordsById: (id) => {
+        return HandleRequest.get(`${SECTIONS}/${id}/records`)
+    },
     create: (payload) => {
         return HandleRequest.post(SECTIONS, payload);
     },
