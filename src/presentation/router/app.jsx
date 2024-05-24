@@ -7,7 +7,7 @@ import ForgotPassword from "../components/forgot-password";
 import Dashboard from "../pages/dashboard/dashboard";
 import SignUp from "../pages/home/views/signup";
 import NotFound from "../pages/404";
-import ListRecord from "../pages/dashboard/views/list-record";
+import List from "../pages/dashboard/views/list";
 
 export const router = createBrowserRouter([
     {
@@ -42,7 +42,7 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: ":name",
-                element: <ListRecord />
+                element: <List />
             },
         ]
     },

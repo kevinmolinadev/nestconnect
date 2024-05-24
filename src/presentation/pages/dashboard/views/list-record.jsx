@@ -20,7 +20,7 @@ const ListRecord = () => {
     }
 
     return (
-        <div className="p-4 flex-grow">
+        <div className="py-1.5 px-4 flex-grow">
             <table className="rounded-md overflow-hidden section-list w-full">
                 <thead className="text-white bg-neutro-tertiary">
                     <tr >
