@@ -17,14 +17,13 @@ const SignUp = () => {
     const [selectedCampusId, setSelectedCampusId] = useState("");
     const [campusData, setCampusData] = useState([]);
     const fectData = useQuery({ queryKey: ["campus"], queryFn: CampusService.getAll, staleTime: 10 * 60 * 1000 })
-    const sendData = useMutation({ mutationFn: (data) => AuthService.signUp(data), onError: (e) => updateError(e.message) })
+    const sendData = useMutation({ mutationFn: (data) => AuthService.signUp(data), onSuccess: (data) => updateUser(data.user), onError: (e) => updateError(e.message) })
 
     useEffect(() => {
         if (fectData.isSuccess) setCampusData(fectData.data);
     }, [fectData.isSuccess])
 
     if (sendData.isSuccess) {
-        updateUser(sendData.data);
         return <VerificationCode type="validation" />;
     }
 

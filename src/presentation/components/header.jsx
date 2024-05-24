@@ -14,7 +14,6 @@ const Header = ({ isSticky, isSuccess }) => {
             setIsOpen(!isOpen)
         }
     }
-    console.log(data)
     return (
         <header className={` bg-neutro-tertiary text-white ${isSticky ? "sticky top-0 z-50" : ""}`}>
             <div className="m-auto flex items-center p-2 md:p-3 md:w-11/12 lg:p-3.5 lg:w-9/12">

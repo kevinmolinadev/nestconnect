@@ -2,10 +2,10 @@ import { ChevronFirst, ChevronLast, Edit, Trash2 } from "lucide-react";
 import logo from "../assets/logo.png";
 import { createContext, useContext, useState } from "react";
 import { UserContext } from "../context/user"
-import { UploadService } from "../../infraestructure/services/upload";
 import ProfileDefault from "./profile-default";
 import { useNavigate } from "react-router-dom";
 import { SectionContext } from "../context/section";
+import { UserService, UploadService } from "../../infraestructure";
 
 const SidebarContext = createContext();
 
@@ -131,13 +131,13 @@ export function SideBarItem({ icon, context, text, alert }) {
 
 function ProfileModal({ profileData, setProfileData, closeModal }) {
   const [formData, setFormData] = useState(profileData);
+  const { updateUser } = useContext(UserContext);
   const [uploadFile, setUploadFile] = useState(null);
   const isDefaultImage = formData.image_url === null;
 
   const handleChange = async (e) => {
     const { name, value, files } = e.target;
     if (name === "image_url") {
-      console.log(formData)
       const { url } = await UploadService.getURL({ folder: `users/${formData.id}/profile`, name: files[0].name, type: files[0].type })
       setUploadFile({ url, file: files[0] });
       setFormData({
@@ -152,10 +152,11 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const url = await UploadService.upload(uploadFile.url, uploadFile.file)
-
+    UploadService.upload(uploadFile.url, uploadFile.file)
+      .then((url) => UserService.update({ image_url: url, name: profileData.name, last_name: profileData.last_name }))
+      .then((data) => updateUser(data));
     setProfileData(formData);
     closeModal();
   };
