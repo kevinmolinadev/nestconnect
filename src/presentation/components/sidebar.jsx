@@ -154,9 +154,13 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    UploadService.upload(uploadFile.url, uploadFile.file)
-      .then((url) => UserService.update({ image_url: url, name: profileData.name, last_name: profileData.last_name }))
-      .then((data) => updateUser(data));
+    if (uploadFile) {
+      UploadService.upload(uploadFile.url, uploadFile.file)
+        .then((url) => UserService.update({ image_url: url, name: profileData.name, last_name: profileData.last_name }))
+        .then((data) => updateUser(data));
+    }
+    UserService.update(formData)
+      .then((data) => updateUser(data))
     setProfileData(formData);
     closeModal();
   };
