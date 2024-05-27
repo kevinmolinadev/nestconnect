@@ -19,7 +19,6 @@ export default function SideBar({ children }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleMenuClick = (item) => {
-    console.log(`Clicked on ${item.name}`);
     if (item.id) {
       updateSection(item);
       navigate(`${item.name}`)
