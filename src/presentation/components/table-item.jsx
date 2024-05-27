@@ -11,15 +11,19 @@ const TableItem = ({ item, index }) => {
         console.log(`Eliminar registro con id: ${id}`);
     };
 
+    const formatValue = (value) => {
+        if (typeof value === 'boolean') return value ? "Si" : "No";
+        if (!isNaN(Date.parse(value))) return null
+        return value;
+    };
 
     return (
         <tr>
             <td>{index + 1}</td>
             {Object.entries(data).map(([key, value]) => {
-                if (new Date(value).toString() !== "Invalid Date") return;
-                if (typeof value === 'boolean') value ? 'Sí' : 'No'
-
-                return <td key={key}>{value}</td>
+                const formattedValue = formatValue(value);
+                if (formattedValue === null) return;
+                return <td key={key}>{formattedValue}</td>
             })}
             <td>{new Date(created_at).toLocaleString()}</td>
             <td>{new Date(updated_at).toLocaleString()}</td>

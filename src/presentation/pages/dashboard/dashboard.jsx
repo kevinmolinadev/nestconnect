@@ -7,7 +7,7 @@ import { SectionProvider } from "../../context/section";
 import { useQuery } from "@tanstack/react-query";
 import { SectionService } from "../../../infraestructure/services/section";
 import AddSectionForm from "../../components/AddSectionForm";
-import Modal from "../../components/Modal";
+import WrapperFormSection from "../../components/wrapper-form-section";
 
 const Dashboard = () => {
     const { user } = useContext(UserContext);
@@ -24,12 +24,13 @@ const Dashboard = () => {
         setShowForm(false);
     };
 
+
     return (
         <SectionProvider>
             <div className="flex">
                 <SideBar>
-                <button 
-                        onClick={handleAddSection} 
+                    <button
+                        onClick={handleAddSection}
                         className="flex items-center px-4 py-2 bg-neutro-tertiary text-white rounded-lg hover:bg-neutro-tertiary-dark"
                     >
                         <PlusCircle size={20} className="mr-2" /> Agregar Seccion
@@ -39,18 +40,17 @@ const Dashboard = () => {
                     {fetchData.data && fetchData.data.data.map((item, index) => (
                         <SideBarItem key={index} context={item} text={item.name} icon={<SquareLibrary size={20} />} />
                     ))}
-                    
+
+
                     <hr className="my-3" />
                     <SideBarItem icon={<Settings size={20} />} text="Settings" />
                     <SideBarItem icon={<LifeBuoy size={20} />} text="Help" />
                 </SideBar>
-                <div className="flex-1 p-6">
-                    <Outlet />
-                </div>
+                <Outlet />
             </div>
-            <Modal isOpen={showForm} onClose={handleCloseModal}>
-                <AddSectionForm onClose={handleCloseModal} />
-            </Modal>
+            <WrapperFormSection isOpen={showForm} onClose={handleCloseModal}>
+                <AddSectionForm onClose={handleCloseModal} OnSuccess={() => fetchData.refetch()} />
+            </WrapperFormSection>
         </SectionProvider>
     );
 };

@@ -1,7 +1,6 @@
-import React from 'react';
 import { FaTimes } from 'react-icons/fa';
 
-const Modal = ({ isOpen, onClose, children }) => {
+const WrapperFormSection = ({ isOpen, onClose, children }) => {
     if (!isOpen) return null;
 
     return (
@@ -19,4 +18,4 @@ const Modal = ({ isOpen, onClose, children }) => {
     );
 };
 
-export default Modal;
+export default WrapperFormSection;

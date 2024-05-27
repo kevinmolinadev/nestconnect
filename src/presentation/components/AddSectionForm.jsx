@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { SectionService } from "../../infraestructure/services/section";
-import { FaQuestionCircle } from 'react-icons/fa';
+import { FaQuestionCircle, FaTrashAlt } from 'react-icons/fa';
 import ToggleSwitch from './ToggleSwitch';
 
-const AddSectionForm = ({ onClose }) => {
+const AddSectionForm = ({ onClose, OnSuccess }) => {
     const [attributes, setAttributes] = useState([{ name: "", type: "text" }]);
     const [types, setTypes] = useState([]);
     const [sectionName, setSectionName] = useState("");
@@ -46,10 +46,7 @@ const AddSectionForm = ({ onClose }) => {
         };
         try {
             await SectionService.create(payload);
-            alert("Sección creada exitosamente");
-            setSectionName("");
-            setAttributes([{ name: "", type: "text" }]);
-            setIsPublic(false);
+            OnSuccess();
             onClose();
         } catch (error) {
             console.error("Error creating section", error);
@@ -106,9 +103,9 @@ const AddSectionForm = ({ onClose }) => {
                     <button
                         type="button"
                         onClick={() => handleRemoveAttribute(index)}
-                        className="px-4 py-2 bg-neutro-tertiary text-white rounded-lg hover:bg-neutro-tertiary-dark"
+                        className="p-2 bg-neutro-tertiary text-white rounded-lg hover:bg-neutro-tertiary-dark"
                     >
-                        Eliminar
+                        <FaTrashAlt />
                     </button>
                 </div>
             ))}

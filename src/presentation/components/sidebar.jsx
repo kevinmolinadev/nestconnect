@@ -11,10 +11,10 @@ const SidebarContext = createContext();
 
 export default function SideBar({ children }) {
   const { user } = useContext(UserContext)
-  const { updateSection } = useContext(SectionContext)
+  const { updateSection, section } = useContext(SectionContext)
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(true);
-  const [activeItem, setActiveItem] = useState("Home");
+  const [activeItem, setActiveItem] = useState(section?.name);
   const [profileData, setProfileData] = useState(user);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -83,7 +83,7 @@ export default function SideBar({ children }) {
   );
 }
 
-export function SideBarItem({ icon, context, text, alert }) {
+export function SideBarItem({ icon, context, text }) {
   const { expanded, handleMenuClick, activeItem } = useContext(SidebarContext);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -173,7 +173,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="absolute z-10 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl mb-4 text-center">Editar Perfil</h2>
         <div className="text-center mb-4 relative">

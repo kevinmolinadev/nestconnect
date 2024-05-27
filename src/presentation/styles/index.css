@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* FOR ALERT ERROR  */
 @keyframes fadeIn {
     0% {
         opacity: 0;
@@ -34,6 +35,7 @@
     animation: fadeOut 0.3s ease-in-out both;
 }
 
+/* FOR VIEW THE RECORS OF A SECTION */
 .section-list *:is(tr, th, td) {
     text-align: left;
     padding: 0.5rem;
@@ -50,4 +52,19 @@
 
 .section-list>tbody>tr>td {
     font-size: clamp(0.3rem, 1vw, 15px);
+}
+
+/* FOR MESSAGES IN THE TOLTIP */
+.wrapper {
+    position: relative;
+    display: flex;
+}
+
+.wrapper article {
+    display: none;
+    /* clip-path: polygon(60% 10%, 100% 10%, 100% 100%, 0 100%, 0 10%, 40% 10%, 50% 0); */
+}
+
+.wrapper>:hover~article {
+    display: block;
 }

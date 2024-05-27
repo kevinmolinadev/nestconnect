@@ -8,6 +8,7 @@ import Dashboard from "../pages/dashboard/dashboard";
 import SignUp from "../pages/home/views/signup";
 import NotFound from "../pages/404";
 import List from "../pages/dashboard/views/list";
+import ListRecord from "../pages/dashboard/views/list-record";
 
 export const router = createBrowserRouter([
     {
@@ -23,16 +24,20 @@ export const router = createBrowserRouter([
                 element: <Chat />
             },
             {
-                path: "/login",
+                path: "login",
                 element: <Login />
             },
             {
-                path: "/signup",
+                path: "signup",
                 element: <SignUp />
             },
             {
-                path: "/forgot-password",
+                path: "forgot-password",
                 element: <ForgotPassword />
+            },
+            {
+                path: ":section",
+                element: <div>Contenido</div>
             },
         ]
     },
@@ -42,7 +47,21 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: ":name",
-                element: <List />
+                element: <List />,
+                children: [
+                    {
+                        path: "",
+                        element: <ListRecord />
+                    },
+                    {
+                        path: "records",
+                        element: <ListRecord />
+                    },
+                    {
+                        path: "moderators",
+                        element: <div>Seccion de los moderadores</div>
+                    }
+                ]
             },
         ]
     },
