@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { SectionContext } from "../../../context/section";
 import { useQuery } from "@tanstack/react-query";
 import { SectionService } from "../../../../infraestructure";
@@ -6,16 +6,51 @@ import TableItem from "../../../components/table-item";
 import Empty from "../../../assets/no-task.png"
 import { FilePlus2 } from "lucide-react";
 import LoadRecords from "../../../components/load-record";
+import Modal from "react-modal";
+import RenderFieldForm from "../../../components/renderfieldform";
 
+Modal.setAppElement("#root");
 const ListRecord = () => {
     const { section } = useContext(SectionContext);
 
-    const { data: fetchData, isLoading, error } = useQuery({
+    const [showModal, setShowModal] = useState(false);
+
+
+    const { data: fetchData, isLoading, error, refetch} = useQuery({
+
         queryKey: ["section", { id: section.id }],
         queryFn: () => SectionService.getRecordsById(section.id),
         enabled: !!section,
     });
 
+    const handleAddClick = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: "white",
+      borderRadius: "8px",
+      padding: "20px",
+      outline: "none",
+    },
+    overlay: {
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  };
 
     if (isLoading || error) return <LoadRecords />;
 
@@ -25,9 +60,18 @@ const ListRecord = () => {
     return (
         <div className="flex flex-col gap-4 flex-grow p-4">
             <div className="flex gap-4">
-                <button className="px-3 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
+                <button onClick={handleAddClick} className="px-3 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
                     <FilePlus2 size={24} />
                 </button>
+                <Modal
+                    isOpen={showModal}
+                    onRequestClose={handleCloseModal}
+                    contentLabel="Agregar Registro"
+                    style={customStyles}
+                >
+                    <RenderFieldForm fields={section.fields || []} onClose={handleCloseModal} section={section.id} onSuccess={()=> refetch()} />
+                </Modal>
+
                 <input
                     type="text"
                     placeholder="Buscar..."

@@ -218,7 +218,7 @@ const Chat = () => {
             ["carreras de interes"]: interests.join(", ")
         };
 
-        console.log(data);
+        
 
         if (isAnonymous) {
             setConfirmationMessageVisible(true);

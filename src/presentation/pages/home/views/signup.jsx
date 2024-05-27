@@ -107,7 +107,6 @@ const SignUp = () => {
                             <input
                                 required
                                 type="password"
-                                onErrorCapture={() => console.log("Error")}
                                 placeholder="Contraseña"
                                 className="p-2 rounded-md w-full"
                                 value={password}
