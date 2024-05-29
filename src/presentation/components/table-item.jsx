@@ -13,6 +13,7 @@ const TableItem = ({ item, index }) => {
 
     const formatValue = (value) => {
         if (typeof value === 'boolean') return value ? "Si" : "No";
+        if (typeof value === 'number') return value.toString();
         if (!isNaN(Date.parse(value))) return null
         return value;
     };

@@ -1,21 +1,24 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Switch } from '@headlessui/react';
 import { RecordService } from '../../infraestructure';
 import { ErrorContext } from '../context/error';
 import { UserContext } from '../context/user';
+import { FaQuestionCircle } from 'react-icons/fa';
+import { Visibilities } from "../../infraestructure"
 
 
 const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
   const [formData, setFormData] = useState({});
-  const {updateError } = useContext(ErrorContext)
-  const {user} = useContext(UserContext)
+  const [visibility, setVisibility] = useState("all")
+  const { updateError } = useContext(ErrorContext)
+  const { user } = useContext(UserContext)
 
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === 'file' ? files[0] : type===`number`? +value:value,
+      [name]: type === 'file' ? files[0] : type === `number` ? +value : value,
     }));
   };
 
@@ -31,18 +34,19 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
       const fileField = fields.find((field) => field.type === 'file');
       if (fileField && formData[fileField.name]) {
         const file = formData[fileField.name];
-        
+
         if (!file.type.startsWith('image/')) {
           updateError('El archivo seleccionado debe ser una imagen.');
           return;
         }
         formData[fileField.name] = file.name
       }
-      
+
       const payload = {
-            id_section: section,
-            id_campus: user.id_campus,
-            data: formData
+        id_section: section,
+        id_campus: user.id_campus,
+        data: formData,
+        visibility
       }
       await RecordService.create(payload);
       onSuccess();
@@ -59,14 +63,11 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
           <Switch
             checked={formData[name] || false}
             onChange={(checked) => handleSwitchChange(name, checked)}
-            className={`${
-              formData[name] ? 'bg-blue-600' : 'bg-gray-200'
-            } relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+            className={`${formData[name] ? 'bg-neutro-tertiary' : 'bg-gray-200'} ml-auto relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none`}
           >
             <span
-              className={`${
-                formData[name] ? 'translate-x-6' : 'translate-x-1'
-              } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+              className={`${formData[name] ? 'translate-x-6' : 'translate-x-1'
+                }  w-4 h-4 transform bg-white rounded-full transition-transform`}
             />
           </Switch>
         );
@@ -79,7 +80,7 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
             name={name}
             accept="image/*"
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="block ml-auto w-3/5 rounded-md p-1 border border-black focus:outline-none"
           />
         );
       default:
@@ -91,14 +92,14 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
             name={name}
             value={formData[name] || ''}
             onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="block ml-auto w-3/5 rounded-md p-1 border border-black focus:outline-none"
           />
         );
     }
   };
 
   return (
-    <div className="p-6">
+    <div className="p-3 w-96">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Agregar Registro</h2>
         <button
@@ -116,18 +117,40 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
           </svg>
         </button>
       </div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4  text-sm ">
         {fields.map(({ name, type }) => (
-          <div key={name} className="mb-4 flex items-center">
-            <label htmlFor={name} className="block text-sm font-medium text-gray-700 capitalize mr-4">
+          <div key={name} className="flex items-center">
+            <label htmlFor={name} className="block font-medium text-gray-700 capitalize mr-2">
               {name}
             </label>
             {renderInput(name, type)}
           </div>
         ))}
+        <div className="text-sm flex items-center">
+          <p className='block font-medium text-gray-700 capitalize'>Visibilidad</p>
+          <span className="ml-2 text-gray-500 cursor-pointer relative group ">
+            <FaQuestionCircle />
+            <span className="absolute left-0 -bottom-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+              Todos: El registro sera visible para todos.
+              <br />
+              Estudiantes: El registro será visible solo para estudiantes y administradores.
+              <br />
+              Administración: El registro será visible únicamente para administradores.
+            </span>
+          </span>
+          <select
+            value={visibility}
+            onChange={(e) => setVisibility(e.target.value)}
+            className="ml-auto p-1 w-3/5 rounded-md border border-black "
+          >
+            {Visibilities.map((item, idx) => (
+              <option key={idx} value={item.value}>{item.name}</option>
+            ))}
+          </select>
+        </div>
         <button
           type="submit"
-          className="px-4 py-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary"
+          className="px-4 self-end py-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary"
         >
           Agregar Registro
         </button>
