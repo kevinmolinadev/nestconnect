@@ -26,7 +26,7 @@ const Header = ({ isSticky, isSuccess }) => {
                                 {
                                     data && (
                                         data.data.map((item) => <li key={item.id} className="max-lg:flex max-lg:items-center max-lg:gap-2">
-                                            <Link className="max-lg:py-2 max-lg:text-[17px] md:px-2 lg:px-4 inline-block" to={item.name}>{item.name}</Link>
+                                            <Link className="max-lg:py-2 max-lg:text-[17px] md:px-2 lg:px-4 inline-block" to={item.id}>{item.name}</Link>
                                             <IoLayers className="max-lg:inline hidden text-2xl" />
                                         </li>)
                                     )

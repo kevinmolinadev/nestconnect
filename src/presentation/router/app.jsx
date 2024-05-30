@@ -9,6 +9,7 @@ import SignUp from "../pages/home/views/signup";
 import NotFound from "../pages/404";
 import List from "../pages/dashboard/views/list";
 import ListRecord from "../pages/dashboard/views/list-record";
+import Section from "../components/section";
 
 export const router = createBrowserRouter([
     {
@@ -37,7 +38,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: ":section",
-                element: <div>Contenido</div>
+                element: <Section />
             },
         ]
     },
