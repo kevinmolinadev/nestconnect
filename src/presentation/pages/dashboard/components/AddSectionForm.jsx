@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { SectionService } from "../../infraestructure/services/section";
+import { SectionService } from "../../../../infraestructure/services/section";
 import { FaQuestionCircle, FaTrashAlt } from 'react-icons/fa';
-import { FieldTypes, Visibilities } from "../../infraestructure";
+import { FieldTypes, Visibilities } from "../../../../infraestructure";
 
 const AddSectionForm = ({ onClose, OnSuccess }) => {
     const [attributes, setAttributes] = useState([{ name: "", type: "text" }]);
@@ -24,7 +24,9 @@ const AddSectionForm = ({ onClose, OnSuccess }) => {
     };
 
     const handleSubmit = async (event) => {
+        
         event.preventDefault();
+        if(attributes.length < 1)return updateError("Agrega Al Menos Un Atributo")
         const payload = {
             name: sectionName,
             fields: attributes,
@@ -35,7 +37,7 @@ const AddSectionForm = ({ onClose, OnSuccess }) => {
             OnSuccess();
             onClose();
         } catch (error) {
-            console.error("Error creating section", error);
+            updateError(error.message);
         }
     };
 

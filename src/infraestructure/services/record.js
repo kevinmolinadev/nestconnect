@@ -1,3 +1,4 @@
+import { json } from "react-router-dom";
 import { HandleRequest } from "../handleRequest"
 const RECORDS = import.meta.env.VITE_API_RECORD
 export const RecordService = {
@@ -13,7 +14,15 @@ export const RecordService = {
     update: (id, payload) => {
         return HandleRequest.put(`${RECORDS}/${id}`, payload)
     },
-    delete: (id) => {
-        return HandleRequest.delete(`${RECORDS}/${id}`)
+    delete: async (id,id_section) => {
+        await fetch(`${RECORDS}/${id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({id_section})
+            
+        });
     }
 }

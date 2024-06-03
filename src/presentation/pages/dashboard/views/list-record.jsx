@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { SectionContext } from "../../../context/section";
 import { useQuery } from "@tanstack/react-query";
 import { SectionService } from "../../../../infraestructure";
-import TableItem from "../../../components/table-item";
+import TableItem from "../components/table-item";
 import Empty from "../../../assets/no-task.png"
 import { FilePlus2 } from "lucide-react";
 import LoadRecords from "../../../components/load-record";
@@ -95,7 +95,7 @@ const ListRecord = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {records.map((item, index) => <TableItem key={index} index={index} item={item} />)}
+                    {records.map((item, index) => <TableItem onDelete={refetch} onUpdate={refetch}  key={index} index={index} item={item} />)}
                 </tbody>
             </table> :
                 <div className="flex flex-col gap-4 justify-center items-center flex-grow">
