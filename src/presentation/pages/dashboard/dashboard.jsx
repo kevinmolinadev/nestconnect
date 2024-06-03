@@ -5,9 +5,9 @@ import SideBar, { SideBarItem } from "../../components/sidebar";
 import { UserContext } from "../../context/user";
 import { SectionProvider } from "../../context/section";
 import { useQuery } from "@tanstack/react-query";
-import { SectionService } from "../../../infraestructure/services/section";
-import AddSectionForm from "../../components/AddSectionForm";
-import WrapperFormSection from "../../components/wrapper-form-section";
+import { SectionService } from "../../../infraestructure";
+import AddSectionForm from "./components/AddSectionForm";
+import WrapperFormSection from "./components/wrapper-form-section";
 
 const Dashboard = () => {
     const { user } = useContext(UserContext);
@@ -29,22 +29,18 @@ const Dashboard = () => {
         <SectionProvider>
             <div className="flex">
                 <SideBar>
-                    <button
-                        onClick={handleAddSection}
-                        className="flex items-center px-4 py-2 bg-neutro-tertiary text-white rounded-lg hover:bg-neutro-tertiary-dark"
-                    >
-                        <PlusCircle size={20} className="mr-2" /> Agregar Seccion
-                    </button>
-                    <hr className="my-3" />
-
-                    {fetchData.data && fetchData.data.data.map((item, index) => (
-                        <SideBarItem key={index} context={item} text={item.name} icon={<SquareLibrary size={20} />} />
-                    ))}
-
-
-                    <hr className="my-3" />
-                    <SideBarItem icon={<Settings size={20} />} text="Settings" />
-                    <SideBarItem icon={<LifeBuoy size={20} />} text="Help" />
+                {({ expanded }) => (
+                        <>
+                            <SideBarItem icon={<PlusCircle size={20} />} text="Agregar Sección" context={{ handleClick: handleAddSection }} />
+                            <hr className="my-3" />
+                            {fetchData.data && fetchData.data.data.map((item, index) => (
+                                <SideBarItem key={index} context={item} text={item.name} icon={<SquareLibrary size={20} />} />
+                            ))}
+                            <hr className="my-3" />
+                            <SideBarItem icon={<Settings size={20} />} text="Settings" />
+                            <SideBarItem icon={<LifeBuoy size={20} />} text="Help"/>
+                        </>
+                    )}
                 </SideBar>
                 <Outlet />
             </div>

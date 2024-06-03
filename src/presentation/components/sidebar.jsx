@@ -1,7 +1,7 @@
-import { ChevronFirst, ChevronLast, Edit, Trash2 } from "lucide-react";
+import { ChevronFirst, ChevronLast, Edit, Trash2, PlusCircle } from "lucide-react";
 import logo from "../assets/logo.png";
 import { createContext, useContext, useState } from "react";
-import { UserContext } from "../context/user"
+import { UserContext } from "../context/user";
 import ProfileDefault from "./profile-default";
 import { useNavigate } from "react-router-dom";
 import { SectionContext } from "../context/section";
@@ -10,8 +10,8 @@ import { UserService, UploadService } from "../../infraestructure";
 const SidebarContext = createContext();
 
 export default function SideBar({ children }) {
-  const { user } = useContext(UserContext)
-  const { updateSection, section } = useContext(SectionContext)
+  const { user } = useContext(UserContext);
+  const { updateSection, section } = useContext(SectionContext);
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(true);
   const [activeItem, setActiveItem] = useState(section?.name);
@@ -21,7 +21,7 @@ export default function SideBar({ children }) {
   const handleMenuClick = (item) => {
     if (item.id) {
       updateSection(item);
-      navigate(`${item.name}`)
+      navigate(`${item.name}`);
     }
     setActiveItem(item.name);
   };
@@ -36,8 +36,7 @@ export default function SideBar({ children }) {
           <div className="p-4 pb-2 flex justify-between items-center">
             <img
               src={logo}
-              className={`overflow-hidden  transition-all ${expanded ? "w-52" : "w-0"
-                }`}
+              className={`overflow-hidden transition-all ${expanded ? "w-52" : "w-0"}`}
             />
             <button
               onClick={() => setExpanded((curr) => !curr)}
@@ -47,7 +46,9 @@ export default function SideBar({ children }) {
             </button>
           </div>
           <SidebarContext.Provider value={{ expanded, handleMenuClick, activeItem }}>
-            <ul className="flex-1 px-3"> {children}</ul>
+            <ul className="flex-1 px-3">
+              {children({ expanded })}
+            </ul>
           </SidebarContext.Provider>
           <div
             className={`border-t flex items-center p-4 cursor-pointer relative ${expanded ? 'flex-col' : 'justify-center'}`}
@@ -98,7 +99,11 @@ export function SideBarItem({ icon, context, text }) {
         : "hover:bg-neutro-tertiary/40 text-gray-primary 600"
         }`}
       onClick={() => {
-        handleMenuClick(context || { name: text });
+        if (context?.handleClick) {
+          context.handleClick();
+        } else {
+          handleMenuClick(context || { name: text });
+        }
         if (isMobile) {
           setIsHovered(false); // Ocultar el tooltip al hacer clic en dispositivos móviles
         }
@@ -128,6 +133,7 @@ export function SideBarItem({ icon, context, text }) {
   );
 }
 
+
 function ProfileModal({ profileData, setProfileData, closeModal }) {
   const [formData, setFormData] = useState(profileData);
   const { updateUser } = useContext(UserContext);
@@ -137,7 +143,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
   const handleChange = async (e) => {
     const { name, value, files } = e.target;
     if (name === "image_url") {
-      const { url } = await UploadService.getURL({ folder: `users/${formData.id}/profile`, name: files[0].name, type: files[0].type })
+      const { url } = await UploadService.getURL({ folder: `users/${formData.id}/profile`, name: files[0].name, type: files[0].type });
       setUploadFile({ url, file: files[0] });
       setFormData({
         ...formData,
@@ -159,7 +165,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
         .then((data) => updateUser(data));
     }
     UserService.update(formData)
-      .then((data) => updateUser(data))
+      .then((data) => updateUser(data));
     setProfileData(formData);
     closeModal();
   };
