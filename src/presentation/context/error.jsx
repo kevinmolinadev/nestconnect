@@ -19,7 +19,7 @@ export const ErrorProvider = ({ children }) => {
 
     const clearError = () => setError(null);
     return (
-        <ErrorContext.Provider value={{ error, updateError, clearError }}>
+        <ErrorContext.Provider value={{ error, updateError }}>
             {children}
             {error && <Alert description={error} />}
         </ErrorContext.Provider>

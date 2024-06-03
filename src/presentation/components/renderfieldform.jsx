@@ -58,6 +58,18 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
 
   const renderInput = (name, type) => {
     switch (type) {
+      case 'datetime':
+        return (
+          <input
+            type={`${type}-local`}
+            required
+            id={name}
+            name={name}
+            value={formData[name] || ''}
+            onChange={handleChange}
+            className="block ml-auto w-3/5 rounded-md p-1 border border-black focus:outline-none"
+          />
+        );
       case 'checkbox':
         return (
           <Switch

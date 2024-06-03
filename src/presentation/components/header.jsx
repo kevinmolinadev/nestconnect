@@ -2,9 +2,11 @@ import { IoMenu, IoClose, IoLayers } from "react-icons/io5";
 import { Link, useResolvedPath } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { SectionService } from "../../infraestructure";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Logo from "./logo"
+import { SectionContext } from "../context/section";
 const Header = ({ isSticky, isSuccess }) => {
+    const { updateSection } = useContext(SectionContext);
     const [isOpen, setIsOpen] = useState(false);
     const { pathname } = useResolvedPath()
     const { data } = useQuery({ queryKey: ["sections"], queryFn: SectionService.getAll, enabled: isSuccess });
@@ -26,7 +28,7 @@ const Header = ({ isSticky, isSuccess }) => {
                                 {
                                     data && (
                                         data.data.map((item) => <li key={item.id} className="max-lg:flex max-lg:items-center max-lg:gap-2">
-                                            <Link className="max-lg:py-2 max-lg:text-[17px] md:px-2 lg:px-4 inline-block" to={item.id}>{item.name}</Link>
+                                            <Link className="max-lg:py-2 max-lg:text-[17px] md:px-2 lg:px-4 inline-block" onClick={() => updateSection(item)} to={item.name}>{item.name}</Link>
                                             <IoLayers className="max-lg:inline hidden text-2xl" />
                                         </li>)
                                     )

@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { ErrorProvider } from "./error";
+import { SectionProvider } from "./section";
 
 export const UserContext = createContext(null);
 
@@ -19,7 +20,9 @@ export const UserProvider = ({ children }) => {
     return (
         <UserContext.Provider value={context}>
             <ErrorProvider>
-                {children}
+                <SectionProvider>
+                    {children}
+                </SectionProvider>
             </ErrorProvider>
         </UserContext.Provider>
     )

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ToggleSwitch = ({ isChecked, onChange }) => {
     return (
         <label className="relative inline-flex items-center cursor-pointer">
