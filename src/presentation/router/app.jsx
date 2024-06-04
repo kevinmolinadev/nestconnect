@@ -10,6 +10,7 @@ import NotFound from "../pages/404";
 import List from "../pages/dashboard/views/list";
 import ListRecord from "../pages/dashboard/views/list-record";
 import Section from "../components/section";
+import Moderators from "../pages/dashboard/views/moderators";
 
 export const router = createBrowserRouter([
     {
@@ -60,7 +61,7 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: "moderators",
-                        element: <div>Seccion de los moderadores</div>
+                        element: <Moderators/>
                     }
                 ]
             },
