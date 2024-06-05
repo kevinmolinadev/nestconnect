@@ -23,7 +23,6 @@ const updateRecord = ({ item, onUpdate, onClose }) => {
         }));
     };
 
-
     const handleSwitchChange = (name, checked) => {
         setFormData((prevData) => ({ ...prevData, [name]: checked }));
     };
@@ -33,14 +32,16 @@ const updateRecord = ({ item, onUpdate, onClose }) => {
         try {
             // Verificar si el archivo seleccionado es una imagen
             const fileField = fields.find((field) => field.type === 'file');
-            if (fileField && formData[fileField.name]) {
+            if (fileField && formData[fileField.name] && formData[fileField.name] instanceof File) {
                 const file = formData[fileField.name];
 
                 if (!file.type.startsWith('image/')) {
                     updateError('El archivo seleccionado debe ser una imagen.');
                     return;
                 }
-                formData[fileField.name] = file.name
+                formData[fileField.name] = file.name;
+            } else if (fileField && !formData[fileField.name]) {
+                delete formData[fileField.name];
             }
 
             const payload = {
@@ -74,7 +75,6 @@ const updateRecord = ({ item, onUpdate, onClose }) => {
                 return (
                     <input
                         type={type}
-                        required
                         id={name}
                         name={name}
                         accept="image/*"
@@ -95,7 +95,6 @@ const updateRecord = ({ item, onUpdate, onClose }) => {
                     />
                 );
             case 'datetime':
-                console.log(formData[name])
                 return (
                     <input
                         type={`${type}-local`}
