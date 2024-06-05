@@ -1,4 +1,4 @@
-const Modal = ({ children, message, title, className }) => {
+const ModalWrapper = ({ children, message, title, className }) => {
     return (
         <div className={`wrapper  ${className}`}>
             {children}
@@ -9,4 +9,4 @@ const Modal = ({ children, message, title, className }) => {
         </div>
     )
 }
-export default Modal;
+export default ModalWrapper;
