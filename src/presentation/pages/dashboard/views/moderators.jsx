@@ -1,15 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { UserService } from "../../../../infraestructure";
 import CardUser from "../../../components/card-user";
+import { SectionContext } from "../../../context/section";
 
 const Moderators = () => {
+  const { section, updateSection } = useContext(SectionContext);
   const [data, setData] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await UserService.getUsers();
+      setData(result.data);
+    };
+    fetchData();
+  }, []);
 
   const handleFilter = async (e) => {
     const value = e.target.value;
     if (!value) {
-      setData([]);
+      const result = await UserService.getUsers();
+      setData(result.data);
     } else {
       const result = await UserService.getUsers(value);
       setData(result.data);
@@ -17,22 +28,36 @@ const Moderators = () => {
   };
 
   const handleUserSelection = (userId) => {
-    console.log(userId);
     setSelectedUsers(prevSelected => {
       if (prevSelected.includes(userId)) {
-        return prevSelected.filter(id => id !== userId); // Des-seleccionar si ya está seleccionado
+        return prevSelected.filter(id => id !== userId);
       } else {
-        return [...prevSelected, userId]; // Agregar a la selección
+        return [...prevSelected, userId];
       }
     });
-};
+  };
 
-
-  const handleAddSelectedUsers = () => {
+  const handleAddSelectedUsers = async () => {
     if (selectedUsers.length > 0) {
-      console.log("IDs de usuarios seleccionados:", selectedUsers);
+      const newModerators = [...(section.moderators || [])];
+      selectedUsers.forEach(userId => {
+        const user = data.find(item => item.id === userId);
+        if (user && !newModerators.some(mod => mod.id === userId)) {
+          newModerators.push(user);
+        }
+      });
+      const updatedSection = { ...section, moderators: newModerators };
+      updateSection(updatedSection);
+      await UserService.addModerators(selectedUsers);
+      setSelectedUsers([]);
     }
-    setSelectedUsers([]); // Limpiar selección después de agregar
+  };
+
+  const handleDeleteModerator = (moderatorId) => {
+    console.log(moderatorId);
+    const updatedModerators = section.moderators.filter(mod => mod.id !== moderatorId);
+    const updatedSection = { ...section, moderators: updatedModerators };
+    updateSection(updatedSection);
   };
 
   return (
@@ -55,16 +80,33 @@ const Moderators = () => {
           </div>
         </div>
         <div className="divide-y divide-neutro-tertiary divide-opacity-50">
-        <div className="px-6 py-4 text-sm text-neutro-tertiary">
-                        {data.length > 0
-                            ? data.map((item, index) => <div key={index} onClick={() => handleUserSelection(item.id)}><CardUser isSelected={selectedUsers.includes(item.id)} profile={item} /></div>)
-                            : <p className="italic">No se encontraron resultados para su búsqueda.</p>}
-                    </div>
+          <div className="px-6 py-4 text-sm text-neutro-tertiary">
+            {data.length > 0
+              ? data.map((item, index) => (
+                  <div key={index} onClick={() => handleUserSelection(item.id)}>
+                    <CardUser isSelected={selectedUsers.includes(item.id)} profile={item} />
+                  </div>
+                ))
+              : <p className="italic">No se encontraron resultados para su búsqueda.</p>
+            }
+          </div>
+          <div className="px-6 py-4">
+            <h2 className="text-lg font-semibold">Moderadores</h2>
+            {section && section.moderators.length > 0 ? (
+              section.moderators.map((moderator, index) => (
+                <CardUser 
+                  key={index} 
+                  profile={moderator} 
+                  isModerator={true} 
+                  onDelete={handleDeleteModerator} 
+                />
+              ))
+            ) : (
+              <p className="italic">No hay moderadores.</p>
+            )}
+          </div>
+        </div>
       </div>
-      <div>
-        {/* luis */}
-      </div>
-    </div>
     </div>
   );
 };

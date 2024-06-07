@@ -1,23 +1,27 @@
-import { createContext, useState } from "react";
+// section.jsx
+import { createContext, useState, useEffect } from "react";
 
 export const SectionContext = createContext(null);
 
 export const SectionProvider = ({ children }) => {
-    const [section, setSection] = useState(JSON.parse(sessionStorage.getItem("section")) || null);
+  const [section, setSection] = useState(JSON.parse(sessionStorage.getItem("section")) || null);
 
-    const updateSection = (data) => {
-        sessionStorage.setItem("section", JSON.stringify(data))
-        setSection(data)
-    }
+  useEffect(() => {
+    sessionStorage.setItem("section", JSON.stringify(section));
+  }, [section]);
 
-    const context = {
-        section,
-        updateSection,
-    }
+  const updateSection = (updatedSection) => {
+    setSection(updatedSection);
+  };
 
-    return (
-        <SectionContext.Provider value={context}>
-            {children}
-        </SectionContext.Provider>
-    )
-}
+  const context = {
+    section,
+    updateSection,
+  };
+
+  return (
+    <SectionContext.Provider value={context}>
+      {children}
+    </SectionContext.Provider>
+  );
+};
