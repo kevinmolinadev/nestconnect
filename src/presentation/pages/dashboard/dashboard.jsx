@@ -11,7 +11,7 @@ import WrapperFormSection from "./components/wrapper-form-section";
 
 const Dashboard = () => {
     const { user } = useContext(UserContext);
-    const fetchData = useQuery({ queryKey: ["dashboard", "sections"], queryFn: SectionService.getAll, staleTime: 10 * 60 * 1000, enabled: !!user });
+    const fetchData = useQuery({ queryKey: ["dashboard", "sections"], queryFn: SectionService.getAll, staleTime: 10 * 60 * 1000, enabled: user ? true : false });
     const [showForm, setShowForm] = useState(false);
 
     if (!user) return <Navigate to="/" />
@@ -29,7 +29,7 @@ const Dashboard = () => {
         <SectionProvider>
             <div className="flex">
                 <SideBar>
-                {({ expanded }) => (
+                    {({ expanded }) => (
                         <>
                             <SideBarItem icon={<PlusCircle size={20} />} text="Agregar Sección" context={{ handleClick: handleAddSection }} />
                             <hr className="my-3" />
@@ -38,7 +38,7 @@ const Dashboard = () => {
                             ))}
                             <hr className="my-3" />
                             <SideBarItem icon={<Settings size={20} />} text="Settings" />
-                            <SideBarItem icon={<LifeBuoy size={20} />} text="Help"/>
+                            <SideBarItem icon={<LifeBuoy size={20} />} text="Help" />
                         </>
                     )}
                 </SideBar>

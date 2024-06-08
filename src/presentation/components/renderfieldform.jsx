@@ -1,25 +1,44 @@
 import { useState, useContext } from 'react';
 import { Switch } from '@headlessui/react';
-import { RecordService } from '../../infraestructure';
+import { RecordService, UploadService } from '../../infraestructure';
 import { ErrorContext } from '../context/error';
 import { UserContext } from '../context/user';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { Visibilities } from "../../infraestructure"
+import { Time } from '../../helpers/time';
 
 
 const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
   const [formData, setFormData] = useState({});
   const [visibility, setVisibility] = useState("all")
   const { updateError } = useContext(ErrorContext)
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useContext(UserContext)
 
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === 'file' ? files[0] : type === `number` ? +value : value,
-    }));
+    const maxSizeInBytes = 3 * 1024 * 1024; //3MB
+    let newChanges = {};
+    switch (type) {
+      case "file":
+        if (!files[0].type.startsWith('image/')) {
+          updateError('El archivo seleccionado debe ser una imagen')
+          return e.target.value = "";
+        }
+        if (files[0].size > maxSizeInBytes) {
+          updateError(`El archivo seleccionado no debe superar los ${maxSizeInBytes / 1024 / 1024}MB`)
+          return e.target.value = "";
+        }
+        newChanges[name] = files[0]
+        break;
+      case "number":
+        newChanges[name] = Number(value);
+        break;
+      default:
+        newChanges[name] = value;
+    }
+    setFormData({ ...formData, ...newChanges });
   };
 
 
@@ -30,20 +49,19 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Verificar si el archivo seleccionado es una imagen
+      const date = fields.find((field) => field.type === 'date');
+      if (date && formData[date.name]) formData[date.name] = Time.generateDate(formData[date.name]);
+
       const fileField = fields.find((field) => field.type === 'file');
       if (fileField && formData[fileField.name]) {
         const file = formData[fileField.name];
-
-        if (!file.type.startsWith('image/')) {
-          updateError('El archivo seleccionado debe ser una imagen.');
-          return;
-        }
-        formData[fileField.name] = file.name
+        setIsLoading(true);
+        formData[fileField.name] = await getUrlImage(file);
+        setIsLoading(false);
       }
 
       const payload = {
-        id_section: section,
+        id_section: section.id,
         id_campus: user.id_campus,
         data: formData,
         visibility
@@ -55,6 +73,11 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
       updateError(error.message || `Error al realizar la peticion`)
     }
   };
+
+  const getUrlImage = async (file) => {
+    const { url } = await UploadService.getURL({ folder: `users/${user.id}/sections/${section.name}/resources`, name: file.name, type: file.type });
+    return UploadService.upload(url, file);
+  }
 
   const renderInput = (name, type) => {
     switch (type) {
@@ -135,6 +158,12 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
             <label htmlFor={name} className="block font-medium text-gray-700 capitalize mr-2">
               {name}
             </label>
+            {type === "file" && <span className="ml-2 text-gray-500 cursor-pointer relative group ">
+              <FaQuestionCircle />
+              <span className="absolute left-0 -bottom-10 z-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                Las imagenes deben tener un peso maximo de 3MB
+              </span>
+            </span>}
             {renderInput(name, type)}
           </div>
         ))}
@@ -162,9 +191,13 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
         </div>
         <button
           type="submit"
+          disabled={isLoading}
           className="px-4 self-end py-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary"
         >
-          Agregar Registro
+          {isLoading ? <div className="flex items-center h-full gap-2">
+            Subiendo la imagen
+            <div className='w-6 h-6 rounded-full animate-spin border-2 border-r-white border-y-black border-l-black' />
+          </div> : "Agregar Registro"}
         </button>
       </form>
     </div>

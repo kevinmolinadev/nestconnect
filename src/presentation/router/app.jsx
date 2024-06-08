@@ -11,6 +11,7 @@ import List from "../pages/dashboard/views/list";
 import ListRecord from "../pages/dashboard/views/list-record";
 import Section from "../components/section";
 import Moderators from "../pages/dashboard/views/moderators";
+import InformationRecord from "../components/informaction-record";
 
 export const router = createBrowserRouter([
     {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
                 path: ":section",
                 element: <Section />
             },
+            {
+                path: ":section/:id",
+                element: <InformationRecord />
+            },
         ]
     },
     {
@@ -61,7 +66,7 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: "moderators",
-                        element: <Moderators/>
+                        element: <Moderators />
                     }
                 ]
             },

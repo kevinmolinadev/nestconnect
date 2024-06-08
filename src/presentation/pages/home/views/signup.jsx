@@ -29,6 +29,7 @@ const SignUp = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        if(!userType) return updateError("El campo Tipo de usuario no puede estar vacio")
         const data = {
             name,
             last_name: lastName,
@@ -86,6 +87,7 @@ const SignUp = () => {
                             >
                                 <option value="">Selecciona tipo de usuario</option>
                                 <option value="student">Estudiante</option>
+                                <option value="moderator">Moderador</option>
                                 <option value="administrator">Administrador</option>
                             </select>
                         </div>

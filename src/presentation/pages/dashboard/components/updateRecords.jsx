@@ -4,16 +4,14 @@ import { Switch } from '@headlessui/react';
 import { FaQuestionCircle } from 'react-icons/fa';
 import { RecordService, Visibilities } from '../../../../infraestructure';
 import { ErrorContext } from '../../../context/error';
-import { UserContext } from '../../../context/user';
 import { SectionContext } from '../../../context/section';
 
-const updateRecord = ({ item, onUpdate, onClose }) => {
+const UpdateRecord = ({ item, onUpdate, onClose }) => {
 
     const [formData, setFormData] = useState(item.data);
     const { section: { fields } } = useContext(SectionContext);
     const [visibility, setVisibility] = useState(item.visibility || "all");
     const { updateError } = useContext(ErrorContext);
-    const { user } = useContext(UserContext);
 
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
@@ -190,4 +188,4 @@ const updateRecord = ({ item, onUpdate, onClose }) => {
     );
 };
 
-export default updateRecord;
+export default UpdateRecord;

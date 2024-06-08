@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { SectionService } from "../../../../infraestructure/services/section";
 import { FaQuestionCircle, FaTrashAlt } from 'react-icons/fa';
 import { FieldTypes, Visibilities } from "../../../../infraestructure";
+import { ErrorContext } from "../../../context/error";
 
 const AddSectionForm = ({ onClose, OnSuccess }) => {
     const [attributes, setAttributes] = useState([{ name: "", type: "text" }]);
     const [sectionName, setSectionName] = useState("");
+    const { updateError } = useContext(ErrorContext);
     const [visibility, setVisibility] = useState("all");
 
     const handleAttributeChange = (index, event) => {
@@ -24,9 +26,9 @@ const AddSectionForm = ({ onClose, OnSuccess }) => {
     };
 
     const handleSubmit = async (event) => {
-        
+
         event.preventDefault();
-        if(attributes.length < 1)return updateError("Agrega Al Menos Un Atributo")
+        if (attributes.length < 1) return updateError("Agrega Al Menos Un Atributo")
         const payload = {
             name: sectionName,
             fields: attributes,

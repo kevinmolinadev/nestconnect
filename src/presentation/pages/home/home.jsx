@@ -8,7 +8,7 @@ import { UserContext } from "../../context/user";
 
 const Home = () => {
     const { user } = useContext(UserContext);
-    const query = useQuery({ queryKey: ["visitor"], queryFn: AuthService.visitor, staleTime: 10 * 60 * 1000, enabled: !user });
+    const query = useQuery({ queryKey: ["visitor"], queryFn: AuthService.visitor, staleTime: 10 * 60 * 1000, enabled: user ? false : true });
     return (
         <>
             <div className="flex flex-col min-h-dvh">

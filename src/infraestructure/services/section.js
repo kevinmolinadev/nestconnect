@@ -13,11 +13,20 @@ export const SectionService = {
     getRecordsById: (id) => {
         return HandleRequest.get(`${SECTIONS}/${id}/records`)
     },
+    getModerators: (id) => {
+        return HandleRequest.get(`${SECTIONS}/${id}/moderators`)
+    },
     create: (payload) => {
         return HandleRequest.post(SECTIONS, payload);
     },
+    addModerators: (moderators, id) => {
+        return HandleRequest.post(`${SECTIONS}/${id}/moderators`, moderators);
+    },
     update: (id, payload) => {
         return HandleRequest.put(`${SECTIONS}/${id}`, payload)
+    },
+    deleteModerators: (moderators, id) => {
+        return HandleRequest.put(`${SECTIONS}/${id}/moderators`, moderators);
     },
     delete: (id) => {
         return HandleRequest.delete(`${SECTIONS}/${id}`)
