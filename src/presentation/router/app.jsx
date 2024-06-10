@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: ":section",
-                element: <Section />
+                element: <Section className={" md:w-11/12 lg:w-9/12 my-8"} />
             },
             {
                 path: ":section/:id",
@@ -67,8 +67,12 @@ export const router = createBrowserRouter([
                     {
                         path: "moderators",
                         element: <Moderators />
-                    }
+                    },
                 ]
+            },
+            {
+                path: ":name/records/:id",
+                element: <InformationRecord />
             },
         ]
     },

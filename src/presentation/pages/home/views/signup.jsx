@@ -4,11 +4,9 @@ import Home from "../../../assets/home/home.jpg"
 import { AuthService, CampusService } from "../../../../infraestructure";
 import VerificationCode from "../../../components/verification-code";
 import { ErrorContext } from "../../../context/error";
-import { UserContext } from "../../../context/user";
 
 const SignUp = () => {
     const { updateError } = useContext(ErrorContext);
-    const { updateUser } = useContext(UserContext);
     const [name, setName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -17,7 +15,7 @@ const SignUp = () => {
     const [selectedCampusId, setSelectedCampusId] = useState("");
     const [campusData, setCampusData] = useState([]);
     const fectData = useQuery({ queryKey: ["campus"], queryFn: CampusService.getAll, staleTime: 10 * 60 * 1000 })
-    const sendData = useMutation({ mutationFn: (data) => AuthService.signUp(data), onSuccess: (data) => updateUser(data.user), onError: (e) => updateError(e.message) })
+    const sendData = useMutation({ mutationFn: (data) => AuthService.signUp(data), onError: (e) => updateError(e.message) })
 
     useEffect(() => {
         if (fectData.isSuccess) setCampusData(fectData.data);
@@ -29,7 +27,7 @@ const SignUp = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        if(!userType) return updateError("El campo Tipo de usuario no puede estar vacio")
+        if (!userType) return updateError("El campo Tipo de usuario no puede estar vacio")
         const data = {
             name,
             last_name: lastName,

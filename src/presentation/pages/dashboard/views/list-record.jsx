@@ -3,28 +3,28 @@ import { SectionContext } from "../../../context/section";
 import { useQuery } from "@tanstack/react-query";
 import { SectionService } from "../../../../infraestructure";
 import TableItem from "../components/table-item";
-import Empty from "../../../assets/no-task.png"
-import { FilePlus2 } from "lucide-react";
 import LoadRecords from "../../../components/load-record";
 import Modal from "react-modal";
 import RenderFieldForm from "../../../components/renderfieldform";
 import * as XLSX from 'xlsx';
-import { TbFileExport } from "react-icons/tb";
 import ModalWrapper from "../../../components/modal-wrapper";
+import ErrorComponent from "../../../components/error";
+import EmptyRecords from "../../../components/empty-records";
 
 Modal.setAppElement("#root");
 const ListRecord = () => {
     const { section } = useContext(SectionContext);
-
     const [showModal, setShowModal] = useState(false);
-
-
-    const { data: fetchData, isLoading, error, refetch } = useQuery({
-
+    const { data: fetchData, isLoading, isError, refetch } = useQuery({
         queryKey: ["section", { id: section.id }],
         queryFn: () => SectionService.getRecordsById(section.id),
         enabled: !!section,
+        staleTime: 1 * 60 * 1000
     });
+
+    if (isLoading) return <LoadRecords />;
+
+    if (isError) return <ErrorComponent />
 
     const handleAddClick = () => {
         setShowModal(true);
@@ -84,24 +84,26 @@ const ListRecord = () => {
         },
     };
 
-    if (isLoading || error) return <LoadRecords />;
-
     const records = fetchData.data || [];
 
     return (
         <div className="flex flex-col gap-4 flex-grow p-4">
             <div className="flex gap-4">
-                <ModalWrapper className="justify-start" title="Crear un nuevo registro" message="Inserta los datos que quieres que tenga tu registro" >
-                    <button onClick={handleAddClick} className="px-3 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
-                        <FilePlus2 size={24} />
+                <input
+                    type="text"
+                    placeholder="Buscar..."
+                    className="px-4 py-2 border border-gray-300 rounded-md w-72"
+                />
+                <ModalWrapper className="justify-center" title="Crear nuevo registro" message="Introduce la información necesaria para añadir un nuevo registro." >
+                    <button onClick={handleAddClick} className="px-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M3 15h6" /><path d="M6 12v6" /></svg>
                     </button>
                 </ModalWrapper>
-                <ModalWrapper className="justify-start" title="Exportar a Excel" message="Exporta todos los campos existentes de la seccion a un archivo Excel" >
-                    <button onClick={handleExportClick} className="px-3 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
-                        <TbFileExport size={24} />
+                <ModalWrapper className="justify-center" title="Exportar a Excel" message="Haz clic para descargar los datos en formato Excel. ¡Es rápido y sencillo!" >
+                    <button onClick={handleExportClick} className="px-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
+                        <svg className="w-6" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M11.5 21h-4.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v5m-5 6h7m-3 -3l3 3l-3 3"></path></svg>
                     </button>
                 </ModalWrapper>
-
                 <Modal
                     isOpen={showModal}
                     onRequestClose={handleCloseModal}
@@ -110,12 +112,6 @@ const ListRecord = () => {
                 >
                     <RenderFieldForm fields={section.fields || []} onClose={handleCloseModal} section={{ id: section.id, name: section.name }} onSuccess={() => refetch()} />
                 </Modal>
-
-                <input
-                    type="text"
-                    placeholder="Buscar..."
-                    className="px-4 py-2 border border-gray-300 rounded-md w-72"
-                />
             </div>
             {records.length > 0 ? <table className="rounded-md overflow-hidden section-list w-full">
                 <thead className="text-white bg-neutro-tertiary">
@@ -136,11 +132,8 @@ const ListRecord = () => {
                 <tbody>
                     {records.map((item, index) => <TableItem onDelete={refetch} onUpdate={refetch} key={index} index={index} item={item} />)}
                 </tbody>
-            </table> :
-                <div className="flex flex-col gap-4 justify-center items-center flex-grow">
-                    <img className="w-1/5" src={Empty} alt="empty" />
-                    <h2 className="text-xl">No hay registros disponibles en esta sección</h2>
-                </div>
+            </table>
+                : <EmptyRecords message="Esta sección aun no tiene registros disponibles." />
             }
         </div>
     );

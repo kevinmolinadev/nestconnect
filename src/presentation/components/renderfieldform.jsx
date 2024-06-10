@@ -3,16 +3,17 @@ import { Switch } from '@headlessui/react';
 import { RecordService, UploadService } from '../../infraestructure';
 import { ErrorContext } from '../context/error';
 import { UserContext } from '../context/user';
-import { FaQuestionCircle } from 'react-icons/fa';
 import { Visibilities } from "../../infraestructure"
 import { Time } from '../../helpers/time';
-
+import { useMutation } from '@tanstack/react-query';
+import Warning from "../assets/warning.png";
+import Question from './question';
 
 const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
   const [formData, setFormData] = useState({});
   const [visibility, setVisibility] = useState("all")
   const { updateError } = useContext(ErrorContext)
-  const [isLoading, setIsLoading] = useState(false);
+  const { isPending, isError, mutate } = useMutation({ mutationFn: (e) => handleSubmit(e), onError: (e) => updateError(e.message), onSuccess })
   const { user } = useContext(UserContext)
 
 
@@ -48,34 +49,25 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const date = fields.find((field) => field.type === 'date');
-      if (date && formData[date.name]) formData[date.name] = Time.generateDate(formData[date.name]);
-
-      const fileField = fields.find((field) => field.type === 'file');
-      if (fileField && formData[fileField.name]) {
-        const file = formData[fileField.name];
-        setIsLoading(true);
-        formData[fileField.name] = await getUrlImage(file);
-        setIsLoading(false);
-      }
-
-      const payload = {
-        id_section: section.id,
-        id_campus: user.id_campus,
-        data: formData,
-        visibility
-      }
-      await RecordService.create(payload);
-      onSuccess();
-      onClose();
-    } catch (error) {
-      updateError(error.message || `Error al realizar la peticion`)
+    const date = fields.find((field) => field.type === 'date');
+    if (date && formData[date.name]) formData[date.name] = Time.generateDate(formData[date.name]);
+    const fileField = fields.find((field) => field.type === 'file');
+    if (fileField && formData[fileField.name]) {
+      const file = formData[fileField.name];
+      formData[fileField.name] = await getUrlImage(file)
     }
+    const payload = {
+      id_section: section.id,
+      id_campus: user.id_campus,
+      data: formData,
+      visibility
+    }
+    await RecordService.create(payload);
+    onClose()
   };
 
   const getUrlImage = async (file) => {
-    const { url } = await UploadService.getURL({ folder: `users/${user.id}/sections/${section.name}/resources`, name: file.name, type: file.type });
+    const { url } = await UploadService.getUrlForFileToRecord({ id_section: section.id, folder: `users/${user.id}/sections/${section.name}/resources`, name: file.name, type: file.type });
     return UploadService.upload(url, file);
   }
 
@@ -152,14 +144,14 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
           </svg>
         </button>
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4  text-sm ">
+      <form onSubmit={(e) => mutate(e)} className="flex flex-col gap-4  text-sm ">
         {fields.map(({ name, type }) => (
           <div key={name} className="flex items-center">
             <label htmlFor={name} className="block font-medium text-gray-700 capitalize mr-2">
               {name}
             </label>
             {type === "file" && <span className="ml-2 text-gray-500 cursor-pointer relative group ">
-              <FaQuestionCircle />
+              <Question/>
               <span className="absolute left-0 -bottom-10 z-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                 Las imagenes deben tener un peso maximo de 3MB
               </span>
@@ -170,7 +162,7 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
         <div className="text-sm flex items-center">
           <p className='block font-medium text-gray-700 capitalize'>Visibilidad</p>
           <span className="ml-2 text-gray-500 cursor-pointer relative group ">
-            <FaQuestionCircle />
+            <Question />
             <span className="absolute left-0 -bottom-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
               Todos: El registro sera visible para todos.
               <br />
@@ -191,12 +183,13 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
         </div>
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isPending}
           className="px-4 self-end py-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary"
         >
-          {isLoading ? <div className="flex items-center h-full gap-2">
-            Subiendo la imagen
-            <div className='w-6 h-6 rounded-full animate-spin border-2 border-r-white border-y-black border-l-black' />
+          {isPending || isError ? <div className="flex items-center h-full gap-2">
+            {isPending ? "Subiendo Imagen" : "Agregar Registro"}
+            {isPending && <div className='w-6 h-6 rounded-full animate-spin border-2 border-r-white border-y-black border-l-black' />}
+            {isError && <img src={Warning} alt="warning" />}
           </div> : "Agregar Registro"}
         </button>
       </form>

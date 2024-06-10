@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react';
-import { FilePenLine, Trash2 } from "lucide-react";
 import UpdateRecord from './updateRecords';
 import { RecordService } from '../../../../infraestructure';
 import { SectionContext } from '../../../context/section';
@@ -58,12 +57,12 @@ const TableItem = ({ item, index, onUpdate, onDelete }) => {
                     if (!formattedValue) return null;
                     return <td key={key}>{formattedValue}</td>
                 })}
-                <td>{new Date(created_at).toLocaleString("es-ES", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })}</td>
-                <td>{new Date(updated_at).toLocaleString("es-ES", { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' })}</td>
+                <td>{Time.getDateString(created_at)}</td>
+                <td>{Time.getDateString(updated_at)}</td>
                 <td>{updated_by.full_name}</td>
                 <td className="flex gap-2 justify-end">
-                    <FilePenLine className="hover:cursor-pointer" size={24} onClick={handleUpdate} />
-                    <Trash2 className="text-red-500 hover:cursor-pointer" size={24} onClick={handleDelete} />
+                    <svg onClick={handleUpdate} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 hover:cursor-pointer"><path d="m18 5-2.414-2.414A2 2 0 0 0 14.172 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2" /><path d="M21.378 12.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" /><path d="M8 18h1" /></svg>
+                    <svg onClick={handleDelete} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 hover:cursor-pointer text-red-500"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
                 </td>
             </tr>
         </>

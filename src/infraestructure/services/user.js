@@ -7,4 +7,7 @@ export const UserService = {
     update: (payload) => {
         return HandleRequest.put(`${USERS}/profile`, payload);
     },
+    getProfile: () => {
+        return HandleRequest.get(`${USERS}/profile`);
+    }
 }

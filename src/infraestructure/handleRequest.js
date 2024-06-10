@@ -1,7 +1,11 @@
 const validateResponse = async (response) => {
-    const data = await response.json()
+    const data = await response.json();
     if (!response.ok) throw new Error(Object.values(data.error)[0]);
-    return data
+    if (response.headers.get("X-User-Type") && response.headers.get("X-User-Email")) {
+        return { data, type: response.headers.get("X-User-Type"), validatedEmail: "true" === response.headers.get("X-User-Email") }
+    }
+    return data;
+
 }
 
 export const HandleRequest = {

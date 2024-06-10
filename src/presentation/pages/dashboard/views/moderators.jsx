@@ -1,17 +1,32 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import NoItem from "../../../assets/svg/NoItemsCart.svg"
 import { SectionService, UserService } from "../../../../infraestructure";
 import CardUser from "../../../components/card-user";
 import { SectionContext } from "../../../context/section";
 import { ErrorContext } from "../../../context/error";
 import { useQuery } from "@tanstack/react-query";
+import { UserContext } from "../../../context/user";
+import { useNavigate } from "react-router-dom";
 
 const Moderators = () => {
+  const { credentials } = useContext(UserContext);
   const { section } = useContext(SectionContext);
   const { updateError } = useContext(ErrorContext)
-  const { data: { moderators }, refetch } = useQuery({ queryKey: ["section", `${section.id}`, "moderators"], queryFn: () => SectionService.getModerators(section.id), initialData: { moderators: section.moderators } })
+  const { data: { moderators }, refetch } = useQuery({
+    queryKey: ["section", `${section.id}`, "moderators"],
+    queryFn: () => SectionService.getModerators(section.id),
+    initialData: { moderators: section.moderators },
+    enabled: credentials.type === "administrator"
+  })
+  const navigate = useNavigate();
   const [filter, setFilter] = useState({ value: "", data: [] });
   const [selectedUsers, setSelectedUsers] = useState([]);
+
+  useEffect(() => {
+    if (credentials.type && credentials.type !== "administrator") {
+      return navigate("/")
+    }
+  }, [])
 
   const handleFilter = async (e) => {
     const value = e.target.value
@@ -34,7 +49,7 @@ const Moderators = () => {
   };
 
   const handleAddSelectedUsers = async () => {
-    if (selectedUsers.length < 1) updateError("Debe seleccionar al menos a un moderador")
+    if (selectedUsers.length < 1) return updateError("Debe seleccionar al menos a un moderador")
     try {
       await SectionService.addModerators({ moderators: selectedUsers }, section.id);
       setSelectedUsers([]);

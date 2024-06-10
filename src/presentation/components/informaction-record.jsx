@@ -1,23 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { RecordService } from "../../infraestructure";
 import { Time } from "../../helpers/time"
+import LoadRecords from "./load-record";
 
 const InformationRecord = () => {
     const item = sessionStorage.getItem("record");
-    const [record, setRecord] = useState(JSON.parse(item));
     const { id } = useParams();
-    const { data, isLoading, isError } = useQuery({ queryKey: ["record"], queryFn: () => RecordService.getById(id), enabled: !item })
-
-    useEffect(() => {
-        if (data && !record) {
-            setRecord(data);
-        }
-    }, [data])
-
-    if (isLoading || !record) return <div>Loading..</div>
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ["record"],
+        queryFn: () => RecordService.getById(id),
+        enabled: !item
+    })
+    if (isLoading) return <LoadRecords />
     if (isError) return <Navigate to={"*"} />
+
+    const record = !item ? data : JSON.parse(item);
 
     const formatValue = (value) => {
         if (typeof value === 'boolean') return value ? { value: "Sí" } : { value: "No" };

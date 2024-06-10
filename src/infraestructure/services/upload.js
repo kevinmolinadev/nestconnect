@@ -4,6 +4,9 @@ export const UploadService = {
     getURL: async (payload) => {
         return HandleRequest.post(UPLOAD, payload);
     },
+    getUrlForFileToRecord: async (payload) => {
+        return HandleRequest.post(`${UPLOAD}/sections`, payload);
+    },
     upload: async (url, file) => {
         try {
             const response = await fetch(url, {

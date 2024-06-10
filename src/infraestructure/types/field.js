@@ -27,4 +27,8 @@ export const FieldTypes = [
         name: "Logico",
         value: "checkbox"
     },
+    {
+        name: "Enlace",
+        value: "url"
+    }
 ];

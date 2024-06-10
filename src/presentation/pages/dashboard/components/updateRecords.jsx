@@ -1,10 +1,10 @@
 import { useState, useContext } from 'react';
 import Modal from 'react-modal';
 import { Switch } from '@headlessui/react';
-import { FaQuestionCircle } from 'react-icons/fa';
 import { RecordService, Visibilities } from '../../../../infraestructure';
 import { ErrorContext } from '../../../context/error';
 import { SectionContext } from '../../../context/section';
+import Question from '../../../components/question';
 
 const UpdateRecord = ({ item, onUpdate, onClose }) => {
 
@@ -157,7 +157,7 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
                     <div className="text-sm flex items-center">
                         <p className='block font-medium text-gray-700 capitalize'>Visibilidad</p>
                         <span className="ml-2 text-gray-500 cursor-pointer relative group ">
-                            <FaQuestionCircle />
+                            <Question />
                             <span className="absolute left-0 -bottom-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                                 Todos: El registro será visible para todos.
                                 <br />

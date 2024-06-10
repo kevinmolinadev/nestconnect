@@ -1,4 +1,3 @@
-import { ChevronFirst, ChevronLast, Edit, Trash2, PlusCircle } from "lucide-react";
 import logo from "../assets/logo.png";
 import { createContext, useContext, useState } from "react";
 import { UserContext } from "../context/user";
@@ -21,7 +20,7 @@ export default function SideBar({ children }) {
   const handleMenuClick = (item) => {
     if (item.id) {
       updateSection(item);
-      navigate(`${item.name}`);
+      navigate(`${item.name}/records`);
     }
     setActiveItem(item.name);
   };
@@ -42,12 +41,14 @@ export default function SideBar({ children }) {
               onClick={() => setExpanded((curr) => !curr)}
               className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
             >
-              {expanded ? <ChevronFirst /> : <ChevronLast />}
+              {expanded
+                ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="m17 18-6-6 6-6" /><path d="M7 6v12" /></svg>
+                : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="m7 18 6-6-6-6" /><path d="M17 6v12" /></svg>}
             </button>
           </div>
           <SidebarContext.Provider value={{ expanded, handleMenuClick, activeItem }}>
             <ul className="flex-1 px-3">
-              {children({ expanded })}
+              {children()}
             </ul>
           </SidebarContext.Provider>
           <div
@@ -117,14 +118,14 @@ export function SideBarItem({ icon, context, text }) {
         icon
       )}
       <span
-        className={`overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"
-          } ${text === activeItem ? "text-white" : ""}`}
+        className={`overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0 absolute"
+          } ${text === activeItem ? "text-white" : "z-10"}`}
       >
         {text}
       </span>
       {!expanded && !isMobile && isHovered && (
         <div
-          className={`absolute left-full rounded-md px-2 py-1 ml-6 bg-neutro-tertiary/40 text-white text-sm`}
+          className={`absolute left-full rounded-md px-2.5 py-1.5 ml-6 bg-neutro-tertiary text-white text-sm z-10`}
         >
           {text}
         </div>
@@ -186,7 +187,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
             {formData.image_url ? <img src={formData.image_url} className="w-full h-full object-cover" alt="Profile" /> : <ProfileDefault name={formData.name} />}
           </div>
           <label htmlFor="image" className="absolute bottom-0 right-0 bg-white border border-gray-300 rounded-full p-1 cursor-pointer">
-            <Edit size={16} />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" /></svg>
             <input
               type="file"
               id="image"
@@ -203,7 +204,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
             className={`absolute bottom-0 left-0 bg-white border border-gray-300 rounded-full p-1 cursor-pointer ${isDefaultImage ? "opacity-50 cursor-not-allowed" : ""
               }`}
           >
-            <Trash2 size={16} />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>
           </button>
         </div>
         <h4 className="font-semibold text-center mb-4">¡Hola, {formData.name} {formData.last_name}!</h4>

@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
 import { SectionService } from "../../../../infraestructure/services/section";
-import { FaQuestionCircle, FaTrashAlt } from 'react-icons/fa';
 import { FieldTypes, Visibilities } from "../../../../infraestructure";
 import { ErrorContext } from "../../../context/error";
-
+import Question
+ from "../../../components/question";
 const AddSectionForm = ({ onClose, OnSuccess }) => {
     const [attributes, setAttributes] = useState([{ name: "", type: "text" }]);
     const [sectionName, setSectionName] = useState("");
@@ -49,7 +49,7 @@ const AddSectionForm = ({ onClose, OnSuccess }) => {
                 <label className=" mb-1 text-gray-700 flex items-center">
                     Nombre de la Sección:
                     <span className="ml-2 text-gray-500 cursor-pointer relative group">
-                        <FaQuestionCircle />
+                        <Question />
                         <span className="absolute left-0 -bottom-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                             Nombre único de la sección.
                         </span>
@@ -85,7 +85,7 @@ const AddSectionForm = ({ onClose, OnSuccess }) => {
                         ))}
                     </select>
                     <span className="ml-2 text-gray-500 cursor-pointer relative group">
-                        <FaQuestionCircle />
+                        <Question />
                         <span className="absolute left-0 -bottom-20 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                             Los atributos definen el contenido de la sección. Ejemplos de tipos son: texto, fecha, número. Selecciona el tipo que mejor se ajuste al contenido del atributo.
                         </span>
@@ -95,7 +95,7 @@ const AddSectionForm = ({ onClose, OnSuccess }) => {
                         onClick={() => handleRemoveAttribute(index)}
                         className="p-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-tertiary-dark"
                     >
-                        <FaTrashAlt />
+                        <svg className="w-4" stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1-32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"></path></svg>
                     </button>
                 </div>
             ))}
@@ -118,7 +118,7 @@ const AddSectionForm = ({ onClose, OnSuccess }) => {
                     ))}
                 </select>
                 <span className="ml-2 text-gray-500 cursor-pointer relative group ">
-                    <FaQuestionCircle />
+                    <Question />
                     <span className="absolute left-0 -bottom-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                         Todos: La sección será visible para todos.
                         <br />

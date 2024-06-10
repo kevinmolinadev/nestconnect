@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import backgroundImage from "../../../assets/home/home.jpg"
 import { ErrorContext } from "../../../context/error";
 import { useMutation } from "@tanstack/react-query";
-import { AuthService } from "../../../../infraestructure";
+import { AuthService, UserService } from "../../../../infraestructure";
 import { UserContext } from "../../../context/user";
 import { NeedVerfication } from "../../../components/need-verification";
 
@@ -15,11 +15,12 @@ const Login = () => {
     const { updateUser } = useContext(UserContext);
     const login = useMutation({ mutationFn: (user) => AuthService.logIn(user), onSuccess: (data) => handleUser(data), onError: (e) => updateError(e.message) })
 
-    const handleUser = (data) => {
-        const { user } = data
-        if (!user.validated_email) {
+    const handleUser = async (data) => {
+        const { validatedEmail } = data;
+        if (!validatedEmail) {
             setNeedValidationEmail(true)
         } else {
+            const user = await UserService.getProfile();
             updateUser(user);
             navigate("/dashboard")
         }

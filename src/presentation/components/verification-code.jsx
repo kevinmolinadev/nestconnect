@@ -1,25 +1,29 @@
 import { useState, useContext } from "react";
 import Home from "../assets/home/home.jpg"
 import { useMutation } from "@tanstack/react-query";
-import { AuthService } from "../../infraestructure";
+import { AuthService, UserService } from "../../infraestructure";
 import ResetPassword from "./reset-password";
 import { ErrorContext } from "../context/error";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/user";
 
 const VerificationCode = ({ type }) => {
     const [code, setCode] = useState("");
     const { updateError } = useContext(ErrorContext)
-    const mutation = useMutation({ mutationFn: (code) => AuthService.validateCode({ code }), onError: (e) => updateError(e.message) });
+    const { updateUser } = useContext(UserContext);
+    const navigate = useNavigate();
+    const mutation = useMutation({ mutationFn: (code) => AuthService.validateCode({ code }), onSuccess: () => onSuccess(), onError: (e) => updateError(e.message) });
 
-    if (mutation.isSuccess) {
-        switch (type) {
-            case "validation":
-                AuthService.validateEmail();
-                return <Navigate to="/dashboard" />
-            case "reset-password":
-                return <ResetPassword />
+    const onSuccess = async () => {
+        if (type === "validation") {
+            await AuthService.validateEmail();
+            const user = await UserService.getProfile();
+            updateUser(user);
+            navigate("/dashboard")
         }
     }
+
+    if (mutation.isSuccess && type === "reset-password") return <ResetPassword />
 
     const handleSubmit = async (e) => {
         e.preventDefault();
