@@ -11,16 +11,15 @@ import Question from './question';
 
 const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
   const [formData, setFormData] = useState({});
+  const [stateForm, setStateForm] = useState({})
   const [visibility, setVisibility] = useState("all")
   const { updateError } = useContext(ErrorContext)
   const { isPending, isError, mutate } = useMutation({ mutationFn: (e) => handleSubmit(e), onError: (e) => updateError(e.message), onSuccess })
   const { user } = useContext(UserContext)
 
-
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     const maxSizeInBytes = 3 * 1024 * 1024; //3MB
-    let newChanges = {};
     switch (type) {
       case "file":
         if (!files[0].type.startsWith('image/')) {
@@ -31,26 +30,34 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
           updateError(`El archivo seleccionado no debe superar los ${maxSizeInBytes / 1024 / 1024}MB`)
           return e.target.value = "";
         }
-        newChanges[name] = files[0]
+        setStateForm({ ...stateForm, [`${name}`]: files[0] })
+        setFormData({ ...formData, [`${name}`]: files[0] })
         break;
       case "number":
-        newChanges[name] = Number(value);
+        setStateForm({ ...stateForm, [`${name}`]: value })
+        setFormData({ ...formData, [`${name}`]: Number(value) })
+        break;
+      case "time":
+        setStateForm({ ...stateForm, [`${name}`]: value })
+        setFormData({ ...formData, [`${name}`]: Time.generateDatefromTime(value) })
+        break;
+      case "date":
+        setStateForm({ ...stateForm, [`${name}`]: value })
+        setFormData({ ...formData, [`${name}`]: Time.generateDate(value) })
         break;
       default:
-        newChanges[name] = value;
+        setStateForm({ ...stateForm, [`${name}`]: value })
+        setFormData({ ...formData, [`${name}`]: value })
     }
-    setFormData({ ...formData, ...newChanges });
   };
 
 
   const handleSwitchChange = (name, checked) => {
-    setFormData((prevData) => ({ ...prevData, [name]: checked }));
+    setFormData(({ ...formData, [name]: checked }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const date = fields.find((field) => field.type === 'date');
-    if (date && formData[date.name]) formData[date.name] = Time.generateDate(formData[date.name]);
     const fileField = fields.find((field) => field.type === 'file');
     if (fileField && formData[fileField.name]) {
       const file = formData[fileField.name];
@@ -62,6 +69,7 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
       data: formData,
       visibility
     }
+    console.log(payload);
     await RecordService.create(payload);
     onClose()
   };
@@ -80,7 +88,7 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
             required
             id={name}
             name={name}
-            value={formData[name] || ''}
+            value={stateForm[name] || ''}
             onChange={handleChange}
             className="block ml-auto w-3/5 rounded-md p-1 border border-black focus:outline-none"
           />
@@ -117,7 +125,7 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
             required
             id={name}
             name={name}
-            value={formData[name] || ''}
+            value={stateForm[name] || ''}
             onChange={handleChange}
             className="block ml-auto w-3/5 rounded-md p-1 border border-black focus:outline-none"
           />
@@ -151,7 +159,7 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
               {name}
             </label>
             {type === "file" && <span className="ml-2 text-gray-500 cursor-pointer relative group ">
-              <Question/>
+              <Question />
               <span className="absolute left-0 -bottom-10 z-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
                 Las imagenes deben tener un peso maximo de 3MB
               </span>

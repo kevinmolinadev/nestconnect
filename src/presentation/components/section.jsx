@@ -11,7 +11,6 @@ import { Navigate } from 'react-router-dom';
 
 const Section = ({ className }) => {
     const { section } = useContext(SectionContext);
-
     const { updateError } = useContext(ErrorContext);
     const { isError, isLoading, data: fetchData, error } = useQuery({
         queryKey: ["section", { id: section?.id }],
@@ -19,7 +18,10 @@ const Section = ({ className }) => {
         staleTime: 1 * 60 * 1000,
         enabled: section ? true : false
     });
-
+    const template = {
+        file: section.fields.find(item => item.type === "file"),
+        data: section.fields.filter(item => item.type !== "file")
+    }
 
     useEffect(() => {
         if (isError) updateError(error.message);
@@ -41,6 +43,7 @@ const Section = ({ className }) => {
                         <RecordItem
                             key={index}
                             item={item}
+                            template={template}
                         />
                     ))}
                 </div>

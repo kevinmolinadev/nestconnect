@@ -1,9 +1,16 @@
-import { dayStart } from "@formkit/tempo"
+import { dayStart, format } from "@formkit/tempo"
 
 
 export const Time = {
     generateDate: (value) => {
         return dayStart(value)
+    },
+    generateDatefromTime: (time) => {
+        const [hours, minutes] = time.split(":");
+        return new Date(new Date().setHours(hours, minutes))
+    },
+    getFormatedDate: (date) => {
+        return format(new Date(date), "YYYY-MM-DDTHH:mm:ss");
     },
     getDateString: (date) => {
         const options = date.includes('00:00.000Z')

@@ -1,24 +1,50 @@
 import { useState, useContext } from 'react';
 import Modal from 'react-modal';
 import { Switch } from '@headlessui/react';
-import { RecordService, Visibilities } from '../../../../infraestructure';
+import { RecordService, Visibilities, UploadService } from '../../../../infraestructure';
 import { ErrorContext } from '../../../context/error';
 import { SectionContext } from '../../../context/section';
 import Question from '../../../components/question';
+import { UserContext } from '../../../context/user';
+import { useMutation } from '@tanstack/react-query';
+import { Time } from '../../../../helpers/time';
+import Warning from "../../../assets/warning.png";
 
 const UpdateRecord = ({ item, onUpdate, onClose }) => {
-
     const [formData, setFormData] = useState(item.data);
-    const { section: { fields } } = useContext(SectionContext);
-    const [visibility, setVisibility] = useState(item.visibility || "all");
+    const { section } = useContext(SectionContext);
+    const { user } = useContext(UserContext);
     const { updateError } = useContext(ErrorContext);
+    const [visibility, setVisibility] = useState(item.visibility || "all");
+    const { isPending, isError, mutate } = useMutation({ mutationFn: (e) => handleSubmit(e), onSuccess: () => onUpdate(), onError: (e) => updateError(e.message) })
 
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: type === 'file' ? files[0] : type === `number` ? +value : value,
-        }));
+        const maxSizeInBytes = 3 * 1024 * 1024; //3MB
+        switch (type) {
+            case "file":
+                if (!files[0].type.startsWith('image/')) {
+                    updateError('El archivo seleccionado debe ser una imagen')
+                    return e.target.value = "";
+                }
+                if (files[0].size > maxSizeInBytes) {
+                    updateError(`El archivo seleccionado no debe superar los ${maxSizeInBytes / 1024 / 1024}MB`)
+                    return e.target.value = "";
+                }
+                setFormData({ ...formData, [`${name}`]: files[0] })
+                break;
+            case "number":
+                setFormData({ ...formData, [`${name}`]: Number(value) })
+                break;
+            case "time":
+                setFormData({ ...formData, [`${name}`]: Time.generateDatefromTime(value) })
+                break;
+            case "date":
+                setFormData({ ...formData, [`${name}`]: Time.generateDate(value) })
+                break;
+            default:
+                setFormData({ ...formData, [`${name}`]: value })
+        }
     };
 
     const handleSwitchChange = (name, checked) => {
@@ -27,35 +53,24 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            // Verificar si el archivo seleccionado es una imagen
-            const fileField = fields.find((field) => field.type === 'file');
-            if (fileField && formData[fileField.name] && formData[fileField.name] instanceof File) {
-                const file = formData[fileField.name];
-
-                if (!file.type.startsWith('image/')) {
-                    updateError('El archivo seleccionado debe ser una imagen.');
-                    return;
-                }
-                formData[fileField.name] = file.name;
-            } else if (fileField && !formData[fileField.name]) {
-                delete formData[fileField.name];
-            }
-
-            const payload = {
-                id_section: item.id_section,
-                data: formData,
-                visibility
-            };
-
-            await RecordService.update(item.id, payload);
-            onUpdate();
-            onClose();
-        } catch (error) {
-            updateError(error.message || 'Error al realizar la petición');
-            onClose();
+        const fileField = section.fields.find((field) => field.type === 'file');
+        if (fileField && formData[fileField.name] && formData[fileField.name] instanceof File) {
+            const file = formData[fileField.name];
+            formData[fileField.name] = await getUrlImage(file);
         }
+        const payload = {
+            id_section: item.id_section,
+            data: formData,
+            visibility
+        };
+        await RecordService.update(item.id, payload);
+        onClose();
     };
+
+    const getUrlImage = async (file) => {
+        const { url } = await UploadService.getUrlForFileToRecord({ id_section: section.id, folder: `users/${user.id}/sections/${section.name}/resources`, name: file.name, type: file.type });
+        return UploadService.upload(url, file);
+    }
 
     const renderInput = (name, type) => {
         switch (type) {
@@ -99,7 +114,19 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
                         required
                         id={name}
                         name={name}
-                        value={new Date(formData[name]).toISOString().slice(0, 16)}
+                        value={formData[name] ? Time.getFormatedDate(formData[name]) : ""}
+                        onChange={handleChange}
+                        className="block ml-auto w-3/5 rounded-md p-1 border border-black focus:outline-none"
+                    />
+                );
+            case 'time':
+                return (
+                    <input
+                        type={`${type}`}
+                        required
+                        id={name}
+                        name={name}
+                        value={new Date(formData[name]).toLocaleTimeString().slice(0, 5)}
                         onChange={handleChange}
                         className="block ml-auto w-3/5 rounded-md p-1 border border-black focus:outline-none"
                     />
@@ -145,12 +172,22 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
                         </svg>
                     </button>
                 </div>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-sm">
-                    {fields.map(({ name, type }) => (
+                <form onSubmit={(e) => mutate(e)} className="flex flex-col gap-4 text-sm">
+                    {section.fields.map(({ name, type }) => (
                         <div key={name} className="flex items-center">
                             <label htmlFor={name} className="block font-medium text-gray-700 capitalize mr-2">
                                 {name}
                             </label>
+                            {
+                                type === "file" && (
+                                    <span className="ml-2 text-gray-500 cursor-pointer relative group ">
+                                        <Question />
+                                        <span className="absolute left-0 -bottom-10 z-10 text-xs w-48 p-2 bg-gray-700 text-white rounded opacity-0 transition-opacity duration-300 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto">
+                                            Las imagenes deben tener un peso maximo de 3MB
+                                        </span>
+                                    </span>
+                                )
+                            }
                             {renderInput(name, type)}
                         </div>
                     ))}
@@ -178,9 +215,14 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
                     </div>
                     <button
                         type="submit"
+                        disabled={isPending}
                         className="px-4 self-end py-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary"
                     >
-                        Actualizar Registro
+                        {isPending || isError ? <div className="flex items-center h-full gap-2">
+                            {isPending ? "Subiendo Imagen" : "Actualizar Registro"}
+                            {isPending && <div className='w-6 h-6 rounded-full animate-spin border-2 border-r-white border-y-black border-l-black' />}
+                            {isError && <img src={Warning} alt="warning" />}
+                        </div> : "Actualizar Registro"}
                     </button>
                 </form>
             </div>

@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Time } from '../../helpers/time';
+import { memo } from 'react';
 
-const RecordItem = ({ item }) => {
+const RecordItem = memo(({ item, template: { file, data } })=>{
     const navigate = useNavigate();
     const { pathname } = useLocation();
 
@@ -13,43 +14,34 @@ const RecordItem = ({ item }) => {
         return { value };
     };
 
-    const isUrlImage = (value) => {
-        if (typeof value !== 'string') return false;
-        try {
-            const url = new URL(value);
-            const imageUrlRegex = /\.(jpeg|jpg|gif|png|svg)$/i;
-            return imageUrlRegex.test(url.pathname);
-        } catch (e) {
-            return false;
-        }
-    }
-
     const handleViewRecord = (item) => {
         sessionStorage.setItem("record", JSON.stringify(item))
         navigate(`${pathname}/${item.id}`)
     }
 
     return (
-        <div onClick={() => handleViewRecord(item)} className="overflow-hidden flex flex-col justify-between rounded-lg shadow-xl hover:cursor-pointer">
+        <article onClick={() => handleViewRecord(item)} className="overflow-hidden flex flex-col justify-between rounded-lg shadow-xl hover:cursor-pointer">
             {
-                Object.values(item.data).filter(isUrlImage).map((imgUrl, index) => (
-                    <img key={index} src={imgUrl} className="w-full h-48 object-cover object-center" />
-                ))
+                file && <img className="h-48" src={item.data[file.name]} alt="img" />
             }
-            <div className="p-4 flex flex-col justify-between gap-0.5 h-full">
+            <div className="p-4 flex-grow flex flex-col justify-between">
                 {
-                    Object.entries(item.data).filter(([, value]) => !(isUrlImage(value))).map(([key, value], index) => {
-                        const valueFormatted = formatValue(value);
-                        if (!valueFormatted) return null;
-                        return <div key={index}>
-                            <h3 className="text-sm font-bold text-gray-800">{key}</h3>
-                            <p className="text-sm text-gray-600">{valueFormatted.value}</p>
-                        </div>
+                    data.map((property) => {
+                        const valueFormatted = formatValue(item.data[property.name]);
+                        if (valueFormatted) {
+                            return (
+                                <div key={property.name}>
+                                    <h3 className="text-sm font-bold text-gray-800">{property.name}</h3>
+                                    <p className="text-sm text-gray-600">{valueFormatted.value}</p>
+                                </div>
+                            );
+                        }
+                        return null;
                     })
                 }
             </div>
-        </div>
+        </article>
     );
-};
+});
 
 export default RecordItem;

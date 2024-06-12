@@ -14,7 +14,6 @@ const TableItem = ({ item, index, onUpdate, onDelete }) => {
     };
 
     const handleDelete = async () => {
-
         await RecordService.delete(item.id, section.id)
         onDelete();
     };
