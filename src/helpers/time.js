@@ -12,6 +12,9 @@ export const Time = {
     getFormatedDate: (date) => {
         return format(new Date(date), "YYYY-MM-DDTHH:mm:ss");
     },
+    getTimeFromDate:(date)=>{
+        return format(new Date(date),"hh:mm","eu-EU")
+    },
     getDateString: (date) => {
         const options = date.includes('00:00.000Z')
             ? { year: 'numeric', month: 'long', day: 'numeric' }

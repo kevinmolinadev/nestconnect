@@ -126,7 +126,7 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
                         required
                         id={name}
                         name={name}
-                        value={new Date(formData[name]).toLocaleTimeString().slice(0, 5)}
+                        value={Time.getTimeFromDate(formData[name])}
                         onChange={handleChange}
                         className="block ml-auto w-3/5 rounded-md p-1 border border-black focus:outline-none"
                     />
@@ -151,8 +151,8 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
             isOpen={true}
             onRequestClose={onClose}
             contentLabel="Actualizar Registro"
-            className="fixed inset-0 flex items-center justify-center z-50"
-            overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+            className="fixed w-full inset-0 flex items-center justify-center"
+            overlayClassName="fixed inset-0 bg-black bg-opacity-50  z-50"
         >
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
                 <div className="flex justify-between items-center mb-4">

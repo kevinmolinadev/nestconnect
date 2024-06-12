@@ -21,6 +21,13 @@ const InformationRecord = () => {
         if (typeof value === 'boolean') return value ? { value: "Sí" } : { value: "No" };
         if (typeof value === 'number') return { value: value.toString() };
         if (/^(https:\/\/(docs\.google\.com\/forms\/d\/e\/|forms\.(office|microsoft)\.com\/).*)$/.test(value)) return { value, isUrl: true };
+        if (value.startsWith("https://")) return {
+            value: (
+                <a href={value} target="_blank" className="bg-neutro-tertiary/20 rounded-md px-2 py-1 text-center flex gap-2 justify-center text-white">
+                    ver <svg className="w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" /><path d="m21 3-9 9" /><path d="M15 3h6v6" /></svg>
+                </a>
+            )
+        }
         if (/^(\d{4})-(\d{2})-(\d{2})(T(\d{2}):(\d{2}):(\d{2})(\.\d+)?(Z|([+-](\d{2}):(\d{2})))?)?$/.test(value)) return { value: Time.getDateString(value) }
         return { value };
     };
@@ -46,7 +53,7 @@ const InformationRecord = () => {
                         </div>
                     ))
                 }
-                <div className="py-4 flex flex-col justify-between gap-4 h-full max-xl:mr-auto xl:px-4">
+                <div className="py-4 flex flex-col items-start justify-between gap-4 h-full max-xl:mr-auto xl:px-4">
                     {
                         Object.entries(record.data).filter(([, value]) => !(isUrlImage(value))).map(([key, value], index) => {
                             const valueFormatted = formatValue(value);

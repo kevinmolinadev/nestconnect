@@ -35,25 +35,6 @@
     animation: fadeOut 0.3s ease-in-out both;
 }
 
-/* FOR VIEW THE RECORS OF A SECTION */
-.section-list *:is(tr, th, td) {
-    text-align: left;
-    padding: 0.5rem;
-}
-
-.section-list>thead>tr>th {
-    font-size: clamp(0.6rem, 1.2vw, 1rem);
-}
-
-.section-list>tbody>tr {
-    border: 1px solid #000;
-    border-inline: none;
-}
-
-.section-list>tbody>tr>td {
-    font-size: clamp(0.3rem, 1vw, 15px);
-}
-
 /* FOR MESSAGES IN THE TOLTIP */
 .wrapper {
     position: relative;
@@ -67,4 +48,52 @@
 
 .wrapper>:hover~article {
     display: block;
+}
+
+
+/* FOR TABLE OF RECORDS */
+
+.table {
+    position: absolute;
+    width: 100%;
+    overflow-x: scroll;
+}
+
+.table th,
+.table td {
+    padding: 0.6rem 0;
+    text-align: left;
+    white-space: nowrap;
+    padding-left: 1rem;
+}
+
+
+
+.table thead th {
+    background-color: #522B46;
+    color: #FFFFFF;
+}
+
+.table tbody td {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.table tbody td:first-child,
+.table thead th:first-child,
+.table tbody td:last-child,
+.table thead th:last-child {
+    position: sticky;
+    z-index: 1;
+    padding-inline: 0.7rem;
+}
+
+.table tbody td:first-child,
+.table thead th:first-child {
+    left: 0;
+}
+
+.table tbody td:last-child,
+.table thead th:last-child {
+    right: 0;
 }

@@ -63,6 +63,7 @@ const ListRecord = () => {
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Registros');
         XLSX.writeFile(workbook, `${section.name}.xlsx`);
     };
+
     const customStyles = {
         content: {
             top: "50%",
@@ -78,6 +79,7 @@ const ListRecord = () => {
         },
         overlay: {
             backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex:10,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -89,18 +91,18 @@ const ListRecord = () => {
     return (
         <div className="flex flex-col gap-4 flex-grow p-4">
             <div className="flex gap-4">
-                <input
+                {/* <input
                     type="text"
                     placeholder="Buscar..."
                     className="px-4 py-2 border border-gray-300 rounded-md w-72"
-                />
-                <ModalWrapper className="justify-center" title="Crear nuevo registro" message="Introduce la información necesaria para añadir un nuevo registro." >
-                    <button onClick={handleAddClick} className="px-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
+                /> */}
+                <ModalWrapper className="justify-start z-10" title="Crear nuevo registro" message="Introduce la información necesaria para añadir un nuevo registro." >
+                    <button onClick={handleAddClick} className="p-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M3 15h6" /><path d="M6 12v6" /></svg>
                     </button>
                 </ModalWrapper>
-                <ModalWrapper className="justify-center" title="Exportar a Excel" message="Haz clic para descargar los datos en formato Excel. ¡Es rápido y sencillo!" >
-                    <button onClick={handleExportClick} className="px-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
+                <ModalWrapper className="justify-start z-10" title="Exportar a Excel" message="Haz clic para descargar los datos en formato Excel. ¡Es rápido y sencillo!" >
+                    <button onClick={handleExportClick} className="p-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
                         <svg className="w-6" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M11.5 21h-4.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v5m-5 6h7m-3 -3l3 3l-3 3"></path></svg>
                     </button>
                 </ModalWrapper>
@@ -113,28 +115,30 @@ const ListRecord = () => {
                     <RenderFieldForm fields={section.fields || []} onClose={handleCloseModal} section={{ id: section.id, name: section.name }} onSuccess={() => refetch()} />
                 </Modal>
             </div>
-            {records.length > 0 ? <table className="rounded-md overflow-hidden section-list w-full">
-                <thead className="text-white bg-neutro-tertiary">
-                    <tr>
-                        <th>#</th>
-                        {
-                            section.fields.map(item => {
-                                if (item.type.startsWith("date") || item.type === "time") return;
-                                return <th key={item._id}>{item.name}</th>
-                            })
-                        }
-                        <th>Fecha de creación</th>
-                        {records[0].updated_at && <th>Última modificación</th>}
-                        {records[0].updated_by && <th>Modificado por</th>}
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {records.map((item, index) => <TableItem onDelete={refetch} onUpdate={refetch} key={index} index={index} item={item} />)}
-                </tbody>
-            </table>
-                : <EmptyRecords message="Esta sección aun no tiene registros disponibles." />
-            }
+            <div className="w-full flex-grow relative overflow-x-auto rounded-md">
+                {records.length > 0
+                    ? <table className="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                {
+                                    section.fields.map(item => {
+                                        return <th key={item._id}>{item.name}</th>
+                                    })
+                                }
+                                <th>Fecha de creación</th>
+                                {records[0].updated_at && <th>Última modificación</th>}
+                                {records[0].updated_by && <th>Modificado por</th>}
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {records.map((item, index) => <TableItem onDelete={refetch} onUpdate={refetch} key={index} index={index} item={item} />)}
+                        </tbody>
+                    </table>
+                    : <EmptyRecords message="Esta sección aun no tiene registros disponibles." />
+                }
+            </div>
         </div>
     );
 };
