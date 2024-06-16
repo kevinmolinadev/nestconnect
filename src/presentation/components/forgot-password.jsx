@@ -1,34 +1,33 @@
 import { useContext, useEffect, useState } from "react";
-import Home from "../assets/home/home.jpg"
+import Home from "../assets/home/home.jpg";
 import { AuthService } from "../../infraestructure";
 import VerificationCode from "./verification-code";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorContext } from "../context/error";
 
 const ForgotPassword = () => {
-
   const [email, setEmail] = useState("");
-  const { updateError } = useContext(ErrorContext)
-  const sendData = useMutation({ mutationFn: (email) => AuthService.sendResetPasswordCode({ email }) })
+  const { updateError } = useContext(ErrorContext);
+  const sendData = useMutation({ mutationFn: (email) => AuthService.sendResetPasswordCode({ email }) });
 
   useEffect(() => {
     if (sendData.isError) updateError(sendData.error.message);
-  }, [sendData.isError])
+  }, [sendData.isError]);
 
   const handleValue = (e) => {
-    setEmail(e.target.value.trim())
-  }
+    setEmail(e.target.value.trim());
+  };
 
   const handleSend = async (e) => {
     e.preventDefault();
     sendData.mutate(email);
   };
 
-  if (sendData.isSuccess) return <VerificationCode type="reset-password" />
+  if (sendData.isSuccess) return <VerificationCode type="reset-password" />;
 
   return (
     <div className="flex items-center justify-center relative flex-grow bg-gray-900" style={{ backgroundImage: `url(${Home})`, backgroundSize: 'cover', backgroundPosition: 'top' }}>
-      <div className="bg-white p-8 rounded-lg shadow-2xl" style={{ maxWidth: '400px' }}>
+      <div className="bg-white p-8 rounded-lg shadow-2xl" style={{ maxWidth: '400px', margin: 'auto', width: '90%' }}>
         <form className="space-y-6" onSubmit={handleSend}>
           <h2 className="text-gray-900 text-3xl text-center mb-6">Recuperación de Contraseña</h2>
           <p className="text-gray-900 text-opacity-75 mb-4 text-sm text-center">Introduce tu dirección de correo electrónico a continuación y te enviaremos un código de verificación para restablecer tu contraseña.</p>
@@ -40,6 +39,6 @@ const ForgotPassword = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 export default ForgotPassword;
