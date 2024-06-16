@@ -31,7 +31,7 @@ const VerificationCode = ({ type }) => {
     };
 
     return (
-        <div className="flex items-center justify-center flex-grow bg-gray-900" style={{ backgroundImage: `url(${Home})`, backgroundSize: 'cover', backgroundPosition: 'top' }}>
+        <div className="flex items-center max-sm:p-4 justify-center flex-grow bg-gray-900" style={{ backgroundImage: `url(${Home})`, backgroundSize: 'cover', backgroundPosition: 'top' }}>
             <div className="bg-white p-6 rounded-lg shadow-2xl" style={{ maxWidth: '400px' }}>
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     <h2 className="text-gray-900 text-2xl text-center mb-6">Codigo de Verificación</h2>

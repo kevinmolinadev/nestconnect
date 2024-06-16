@@ -70,7 +70,7 @@ const Moderators = () => {
   };
 
   return (
-    <div className="flex justify-center mt-8">
+    <div className="flex justify-center mt-8 px-4">
       <div className="flex flex-col gap-4 w-full max-w-3xl bg-white">
         <div className="rounded-md overflow-hidden border">
           <div className="p-4 bg-neutro-tertiary border-neutro-tertiary">

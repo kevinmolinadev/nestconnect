@@ -42,7 +42,7 @@ const SignUp = () => {
     return (
         <div className="flex flex-col flex-grow ">
             <div className="flex flex-grow justify-center items-center relative overflow-hidden">
-                <img className="absolute top-0 object-cover w-full" src={Home} alt="Home" />
+                <img className="absolute top-0 object-cover w-full h-full" src={Home} alt="Home" />
                 <div className="bg-white bg-opacity-75 p-8 relative z-10 rounded-lg shadow-2xl w-11/12 md:w-8/12 lg:w-2/6">
                     <h1 className="text-4xl font-bold text-[#522B46] mb-6 text-center">BIENVENIDO</h1>
                     <form onSubmit={handleRegister}>

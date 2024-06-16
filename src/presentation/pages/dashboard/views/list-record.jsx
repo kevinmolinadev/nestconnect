@@ -66,30 +66,29 @@ const ListRecord = () => {
 
     const customStyles = {
         content: {
-            top: "50%",
-            left: "50%",
-            right: "auto",
-            bottom: "auto",
-            marginRight: "-50%",
-            transform: "translate(-50%, -50%)",
             backgroundColor: "white",
             borderRadius: "8px",
-            padding: "20px",
+            position:"relative",
+            inset:"0px",
+            padding: "1rem",
             outline: "none",
         },
         overlay: {
             backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex:10,
+            zIndex: 10,
             display: "flex",
-            justifyContent: "center",
+            width: "100%",
+            height: "100%",
             alignItems: "center",
+            justifyContent: "center",
+            padding: "1rem",
         },
     };
 
     const records = fetchData.data || [];
 
     return (
-        <div className="flex flex-col gap-4 flex-grow p-4">
+        <div className="flex flex-col item gap-4 flex-grow p-4">
             <div className="flex gap-4">
                 {/* <input
                     type="text"

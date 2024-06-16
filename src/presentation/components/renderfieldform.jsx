@@ -134,7 +134,7 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
   };
 
   return (
-    <div className="p-3 w-96">
+    <div className="w-full">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Agregar Registro</h2>
         <button
