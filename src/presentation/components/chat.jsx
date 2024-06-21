@@ -34,7 +34,7 @@ const Chat = () => {
         "licenciatura en nutricion y dietetica": ["nutricion", "dietetica"],
         "ingenieria industrial": ["industrial"],
         "ingenieria en comercio internacional": ["comercio internacional"],
-        "licenciatura en comercio internacional": ["comercio"],
+        "ingenieria en comercio": ["comercio","comercial"],
         "licenciatura en derecho y ciencias juridicas": ["derecho", "ciencias juridicas", "juridicas"],
         "licenciatura en administracion de empresas": ["administracion", "empresas"],
         "licenciatura en psicologia": ["psicologia"],
@@ -216,6 +216,8 @@ const Chat = () => {
             ["carreras de interes"]: interests.join(", ")
         };
 
+        console.log("Datos del estudiante:", data);
+
 
 
         if (isAnonymous) {
@@ -242,10 +244,17 @@ const Chat = () => {
                 foundCareers.push(career);
             }
         });
-        return foundCareers;
+        setInterests(prev => [...new Set([...prev, ...foundCareers])]);
+    return foundCareers;
     };
 
     const handleSendMessage = () => {
+        if (isTyping) {
+            // Cancela la respuesta actual del chatbot si el usuario presiona el botón de enviar de nuevo
+            setIsTyping(false);
+            setMessages(messages => messages.slice(0, -1)); // Elimina el mensaje "Cargando..."
+            return;
+        }
         window.speechSynthesis.cancel();
         if (newMessage.trim()) {
             setMessages(messages => [...messages, { from: 'user', text: newMessage }]);
@@ -273,6 +282,8 @@ const Chat = () => {
                     }
                 };
                 typeWriter();
+
+                findCareersInMessage(newMessage);
             });
             setNewMessage('');
             setUserMessageCount(count => count + 1);
@@ -287,21 +298,18 @@ const Chat = () => {
     };
 
     const renderMessage = (message, index) => {
-        // Detecta URLs que no estén seguidas de un paréntesis cerrado o punto al final.
-        const urlRegex = /(https?:\/\/[^\s]+?)(?=[,.)]?(?:\s|$))/g;
-        const phoneRegex = /(\b\d{8}\b)/g;
-
-        // Función para manejar el evento de clic en el botón de voz
-
+        // Detecta URLs que terminan en .pdf y no estén seguidas de un paréntesis cerrado, punto o coma al final.
+        const urlRegex = /(https?:\/\/[^\s,]+\.pdf)/g;
+        const phoneRegex = /(\b\d{7,8}\b)/g;
+    
         const handleVoiceClick = (text) => {
             if (!isPlaying) {
-                window.speechSynthesis.cancel(); // Cancela cualquier síntesis de voz activa
-
-                // Divide el texto en fragmentos más pequeños
+                window.speechSynthesis.cancel();
+    
                 const textFragments = text.match(/[^.!?]+[.!?]+/g) || [text];
-
+    
                 let currentFragment = 0;
-
+    
                 const speakFragment = () => {
                     if (currentFragment < textFragments.length) {
                         const speech = new SpeechSynthesisUtterance(textFragments[currentFragment]);
@@ -309,26 +317,26 @@ const Chat = () => {
                         speech.rate = 1.2;
                         const voices = window.speechSynthesis.getVoices().filter(item => item.lang === "es-ES");
                         speech.voice = voices.find(voice => voice.name === "Google español") ?? voices[4];
-
+    
                         const setVoice = () => {
                             window.speechSynthesis.speak(speech);
                         };
-
+    
                         if (speechSynthesis.getVoices().length === 0) {
                             window.speechSynthesis.onvoiceschanged = setVoice;
                         } else {
                             setVoice();
                         }
-
+    
                         speech.addEventListener('start', () => {
                             setIsPlaying(true);
                             setPlayableMessageIndex(index);
                         });
-
+    
                         speech.addEventListener('end', () => {
                             currentFragment++;
                             if (currentFragment < textFragments.length) {
-                                speakFragment()
+                                speakFragment();
                             } else {
                                 setIsPlaying(false);
                                 setPlayableMessageIndex(null);
@@ -336,7 +344,7 @@ const Chat = () => {
                         });
                     }
                 };
-
+    
                 speakFragment();
             } else {
                 window.speechSynthesis.cancel();
@@ -344,29 +352,26 @@ const Chat = () => {
                 setPlayableMessageIndex(null);
             }
         };
-
+        
         return (
             <div>
-                {message.text.split(/(https?:\/\/[^\s]+|\b\d{8}\b)/g).map((part, index) => {
+                {message.text.split(/(https?:\/\/[^\s,]+\.pdf|\b\d{7,8}\b)/g).map((part, partIndex) => {
                     if (urlRegex.test(part)) {
-                        // Extrae el enlace limpio
                         const cleanPart = part.match(urlRegex)[0];
                         return (
-                            <a key={index} href={cleanPart} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                            <a key={partIndex} href={cleanPart} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                                 {cleanPart}
                             </a>
                         );
                     } else if (phoneRegex.test(part)) {
-                        // Maneja los números de teléfono para WhatsApp
                         const whatsappUrl = `https://wa.me/591${part}`;
                         return (
-                            <a key={index} href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                            <a key={partIndex} href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                                 {part}
                             </a>
                         );
                     } else {
-                        // Regresa el texto que no es ni URL ni teléfono como un span normal
-                        return <span key={index}>{part}</span>;
+                        return <span key={partIndex}>{part}</span>;
                     }
                 })}
                 {message.from === 'assistant' && lastAssistantMessageComplete && (
@@ -434,8 +439,9 @@ const Chat = () => {
                             value={newMessage}
                             onChange={handleNewMessageChange}
                             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) handleSendMessage(); }}
+                            disabled={isTyping}
                         />
-                        <button onClick={handleSendMessage} className="bg-neutro-tertiary text-white px-2 rounded-lg hover:animate-pulse" >
+                        <button onClick={handleSendMessage} className="bg-neutro-tertiary text-white px-2 rounded-lg hover:animate-pulse" disabled={isTyping}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="m3 3 3 9-3 9 19-9Z"></path><path d="M6 12h16"></path></svg>
                         </button>
                     </div>
