@@ -1,16 +1,17 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { ErrorContext } from "../context/error"
-import { ChatService } from "../../infraestructure";
+import { ChatService, QueryService } from "../../infraestructure";
 
 const Chat = () => {
     const { updateError } = useContext(ErrorContext)
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [showPopup, setShowPopup] = useState(true);
-    const [isTyping, setIsTyping] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [isListening, setIsListening] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
     const recognitionRef = useRef(null);
-    const inactivityTimer = useRef(null);
+    const inactivityTimer = useRef(null)
     const [helpMessageSent, setHelpMessageSent] = useState(false);
     const [userName, setUserName] = useState('');
     const [userPhone, setUserPhone] = useState('');
@@ -26,27 +27,28 @@ const Chat = () => {
     const [showAdvisorContactForm, setShowAdvisorContactForm] = useState(false);
     const [confirmationMessageVisible, setConfirmationMessageVisible] = useState(false);
     const [lastAssistantMessageComplete, setLastAssistantMessageComplete] = useState(false);
+
     const welcomeMessage = isAnonymous ? "Hola Visitante, soy AVU. ¿En qué puedo ayudarte?" : `Hola ${userName}, soy AVU. ¿En qué puedo ayudarte?`;
     const careerKeywords = {
-        "medicina": ["medicina"],
-        "bioquimica y farmacia": ["bioquimica", "farmacia"],
-        "licenciatura en fisioterapia y kinesiologia": ["fisioterapia", "kinesiologia"],
-        "licenciatura en nutricion y dietetica": ["nutricion", "dietetica"],
-        "ingenieria industrial": ["industrial"],
-        "ingenieria en comercio internacional": ["comercio internacional"],
-        "licenciatura en comercio internacional": ["comercio"],
-        "licenciatura en derecho y ciencias juridicas": ["derecho", "ciencias juridicas", "juridicas"],
-        "licenciatura en administracion de empresas": ["administracion", "empresas"],
-        "licenciatura en psicologia": ["psicologia"],
-        "ingenieria en ciencias de datos e inteligencia de negocios": ["datos", "inteligencia de negocios"],
-        "ingenieria biomedica": ["biomedica"],
-        "ingenieria de sistemas informaticos": ["sistemas", "informaticos"],
-        "licenciatura en arquitectura y urbanismo": ["arquitectura", "urbanismo"],
-        "licenciatura en diseño grafico y comunicacion visual": ["diseño grafico", "comunicacion visual"],
-        "licenciatura en gastronomia": ["gastronomia"],
-        "ingenieria civil": ["civil"],
-        "ingenieria aeronautica": ["aeronautica"],
-        "ingenieria mecatronica": ["mecatronica"]
+        "Medicina": ["medicina"],
+        "Bioquímica y Farmacia": ["bioquímica", "farmacia"],
+        "Licenciatura en Fisioterapia y Kinesiología": ["fisioterapia", "kinesiología"],
+        "Licenciatura en Nutrición y Dietética": ["nutrición", "dietética"],
+        "Ingeniería Comercial": ["ingeniería comercial", "comercial"],
+        "Ingeniería en Comercio Internacional": ["comercio internacional"],
+        "Licenciatura en Derecho y Ciencias Jurídicas": ["derecho", "ciencias jurídicas", "jurídicas"],
+        "Licenciatura en Administración de Empresas": ["administración de empresas", "administración", "empresas"],
+        "Licenciatura en Psicología": ["psicología"],
+        "Ingeniería en Ciencia de Datos e Inteligencia de Negocios": ["ciencia de datos", "inteligencia de negocios", "datos"],
+        "Ingeniería Biomédica": ["ingeniería biomédica", "biomédica"],
+        "Ingeniería de Sistemas Informáticos": ["sistemas informáticos", "informáticos", "sistemas"],
+        "Licenciatura en Arquitectura y Urbanismo": ["arquitectura", "urbanismo"],
+        "Licenciatura en Diseño Gráfico y Comunicación Visual": ["diseño gráfico", "comunicación visual"],
+        "Licenciatura en Gastronomía": ["gastronomía"],
+        "Ingeniería Civil": ["ingeniería civil", "civil"],
+        "Ingeniería Aeronáutica": ["ingeniería aeronáutica", "aeronáutica"],
+        "Ingeniería Mecánica y de Automatización Industrial": ["ingeniería mecánica", "automatizacion industrial"],
+        "Ingeniería Industrial": ["ingeniería industrial", "industrial"]
     };
 
     useEffect(() => {
@@ -125,15 +127,9 @@ const Chat = () => {
     }, []);
 
     const validatePhone = (phone) => {
-        const pattern = /^[67][0-9]{7}$/; // Must start with 6 or 7 and have exactly 8 digits
-        const repeatingPattern = /(.)\1{4}/; // Cannot have four identical consecutive digits
-        if (!pattern.test(phone)) {
-            return "El número debe tener 8 dígitos.";
-        }
-        if (repeatingPattern.test(phone)) {
-            return "El número no puede tener cinco dígitos iguales consecutivos.";
-        }
-        return "";
+        const repeatingPattern = /(.)\1{5}/;
+        if (repeatingPattern.test(phone)) return true;
+        return false
     };
 
     const handleNameChange = (e) => {
@@ -147,17 +143,16 @@ const Chat = () => {
 
     const handlePhoneChange = (e) => {
         const phone = e.target.value;
-        if (/^[0-9]*$/.test(phone)) {
+        if (phone.length <= 8) {
             setUserPhone(phone);
-            const error = validatePhone(phone);
-            updateError(error);
-        } else {
-            updateError("Por favor, introduce solo números válidos.");
+            if (validatePhone(phone)) updateError("El número no puede tener seis dígitos iguales consecutivos.");
         }
     };
 
     const unlockChat = () => {
         if (userName && userPhone) {
+            if (userPhone.length !== 8) return updateError("El numero debe tener 8 digitos")
+            if (!userPhone.match(/^[67].*/) || validatePhone(userPhone)) return updateError("El numero ingresado no es un numero valido")
             setIsAnonymous(false);
             setChatUnlocked(true);
             setShowPopup(false);
@@ -177,8 +172,10 @@ const Chat = () => {
 
 
     const sendAdvisorts = () => {
+        setIsLoading(false);
         ChatService.answerQuestion({ question: "Quiero contactar a un asesor" }).then(res => {
-            setIsTyping(false);
+            setIsLoading(true);
+            setIsTyping(true);
             let fullResponse = res.result;
             let i = 0;
             const typeWriter = () => {
@@ -193,6 +190,7 @@ const Chat = () => {
                     setTimeout(typeWriter, 20);
                 } else {
                     setLastAssistantMessageComplete(true);
+                    setIsTyping(false);
                     setPlayableMessageIndex(messages.length);
                 }
             };
@@ -205,34 +203,31 @@ const Chat = () => {
             setShowAdvisorContactForm(true);
         } else {
             sendQuerry();
+            sendAdvisorts();
         }
         setShowContactPopup(false);
     };
 
-    const sendQuerry = () => {
+    const sendQuerry = async () => {
         const data = {
-            nombre: userName,
-            telefono: userPhone,
-            ["carreras de interes"]: interests.join(", ")
+            Nombre: userName,
+            Telefono: userPhone,
+            ["Carreras de interes"]: interests.join(", ")
         };
-
-
-
-        if (isAnonymous) {
-            setConfirmationMessageVisible(true);
-            setTimeout(() => setConfirmationMessageVisible(false), 3000);
-        }
+        await QueryService.create({ data });
+        setConfirmationMessageVisible(true);
+        setTimeout(() => setConfirmationMessageVisible(false), 3000);
     };
 
     useEffect(() => {
-        if (userMessageCount > 2 && messages.length < 7 && !showContactPopup && !showAdvisorContactForm) {
+        if (userMessageCount === 3 && !showContactPopup && !showAdvisorContactForm) {
             const timer = setTimeout(() => {
                 setShowContactPopup(true);
             }, 10000);
 
             return () => clearTimeout(timer);
         }
-    }, [userMessageCount, isAnonymous, showAdvisorContactForm]);
+    }, [newMessage]);
 
     const findCareersInMessage = (message) => {
         const foundCareers = [];
@@ -248,13 +243,12 @@ const Chat = () => {
     const handleSendMessage = () => {
         window.speechSynthesis.cancel();
         if (newMessage.trim()) {
-            setMessages(messages => [...messages, { from: 'user', text: newMessage }]);
             setIsTyping(true);
-
+            setIsLoading(false);
+            setMessages(messages => [...messages, { from: 'user', text: newMessage }]);
             setLastAssistantMessageComplete(false);
-            setTimeout(() => setIsTyping(false), 2000);
             ChatService.answerQuestion({ question: newMessage }).then(res => {
-                setIsTyping(false);
+                setIsLoading(true);
                 let fullResponse = res.result;
                 let i = 0;
                 const typeWriter = () => {
@@ -269,6 +263,7 @@ const Chat = () => {
                         setTimeout(typeWriter, 20);
                     } else {
                         setLastAssistantMessageComplete(true);
+                        setIsTyping(false)
                         setPlayableMessageIndex(messages.length);
                     }
                 };
@@ -288,7 +283,7 @@ const Chat = () => {
 
     const renderMessage = (message, index) => {
         // Detecta URLs que no estén seguidas de un paréntesis cerrado o punto al final.
-        const urlRegex = /(https?:\/\/[^\s]+?)(?=[,.)]?(?:\s|$))/g;
+        const urlRegex = /(https?:\/\/[^\s,]+\.pdf)/g;
         const phoneRegex = /(\b\d{8}\b)/g;
 
         // Función para manejar el evento de clic en el botón de voz
@@ -349,15 +344,16 @@ const Chat = () => {
             <div>
                 {message.text.split(/(https?:\/\/[^\s]+|\b\d{8}\b)/g).map((part, index) => {
                     if (urlRegex.test(part)) {
-                        // Extrae el enlace limpio
                         const cleanPart = part.match(urlRegex)[0];
                         return (
-                            <a key={index} href={cleanPart} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                                {cleanPart}
-                            </a>
+                            <div key={index} className="flex justify-start items-center py-2">
+                                <a href={cleanPart} target="_blank" rel="noopener noreferrer" className="p-1 px-2 rounded-md bg-neutro-tertiary no-underline flex justify-center items-center gap-1">
+                                    <p className="font-semibold">PDF</p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>
+                                </a>
+                            </div>
                         );
                     } else if (phoneRegex.test(part)) {
-                        // Maneja los números de teléfono para WhatsApp
                         const whatsappUrl = `https://wa.me/591${part}`;
                         return (
                             <a key={index} href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
@@ -382,9 +378,15 @@ const Chat = () => {
 
 
     const handleSendOfData = () => {
-        setShowAdvisorContactForm(false);
-        sendQuerry();
-        sendAdvisorts()
+        if (userName && userPhone) {
+            if (userPhone.length !== 8) return updateError("El numero debe tener 8 digitos")
+            if (!userPhone.match(/^[67].*/) || validatePhone(userPhone)) return updateError("El numero ingresado no es un numero valido")
+            setShowAdvisorContactForm(false);
+            sendQuerry();
+            sendAdvisorts()
+        } else {
+            updateError("Por favor, complete ambos campos del formulario")
+        }
     }
 
 
@@ -412,16 +414,21 @@ const Chat = () => {
 
             {!showPopup && (
                 <div className="bg-white flex flex-col rounded-lg shadow-lg w-full h-full max-sm:flex-grow max-w-2xl">
-                    <div className="chat-header max-sm:hidden  bg-neutro-tertiary p-6 rounded-t-lg flex justify-between items-center">
+                    <div className="max-sm:hidden  bg-neutro-tertiary p-6 rounded-t-lg flex justify-between items-center">
                         <h1 className="text-2xl text-white font-bold">Chat con A.V.U</h1>
                     </div>
-                    <div className="chat-messages p-6 max-sm:flex-grow h-[50vh] overflow-y-auto bg-white rounded-b-lg">
+                    <div className="p-6 max-sm:flex-grow h-[50vh] overflow-y-auto bg-white rounded-b-lg">
                         {messages.map((message, index) => (
                             <div key={index} className={`whitespace-pre-line ${message.from === 'user' ? 'bg-neutro-tertiary' : 'bg-gray-400'} my-2 p-2 rounded-lg text-white`}>
                                 {renderMessage(message, index)}
                             </div>
                         ))}
-                        {isTyping && <div className="message bg-gray-400 my-2 p-2 rounded-lg text-white">Cargando...</div>}
+                        {!isLoading &&
+                            <div className="flex gap-1 bg-gray-400 my-2 p-3 rounded-lg items-center w-[10%]">
+                                <div className="w-2.5 h-2.5 rounded-full bg-white animate-bounce"></div>
+                                <div className="w-2.5 h-2.5 rounded-full bg-white animate-bounce [animation-delay:-.3s]"></div>
+                                <div className="w-2.5 h-2.5 rounded-full bg-white animate-bounce [animation-delay:-.5s]"></div>
+                            </div>}
                     </div>
                     <div className="chat-input p-6 flex gap-2">
                         <button onClick={toggleListening} className={`bg-neutro-tertiary text-white px-2.5  rounded-lg  ${isListening ? 'bg-red-500' : ''}`}>
@@ -429,13 +436,13 @@ const Chat = () => {
                         </button>
                         <input
                             type="text"
-                            className="p-2 w-full rounded-lg border border-black"
+                            className="p-2 w-full rounded-lg border border-black outline-neutro-tertiary"
                             placeholder="Escribe tu mensaje aquí..."
                             value={newMessage}
                             onChange={handleNewMessageChange}
-                            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) handleSendMessage(); }}
+                            onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !isTyping) handleSendMessage(); }}
                         />
-                        <button onClick={handleSendMessage} className="bg-neutro-tertiary text-white px-2 rounded-lg hover:animate-pulse" >
+                        <button disabled={isTyping} onClick={handleSendMessage} className="bg-neutro-tertiary text-white px-2 rounded-lg hover:animate-pulse" >
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="m3 3 3 9-3 9 19-9Z"></path><path d="M6 12h16"></path></svg>
                         </button>
                     </div>
@@ -453,7 +460,7 @@ const Chat = () => {
             )}
 
             {showAdvisorContactForm && (
-                <div className="fixed inset-0 bg-black bg-opacity-55 flex justify-center items-center">
+                <div className="fixed inset-0 bg-black bg-opacity-55 flex p-4 justify-center items-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                         <h2 className="text-xl font-bold mb-4">Formulario de Contacto</h2>
                         <div>

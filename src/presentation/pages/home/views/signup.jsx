@@ -27,7 +27,14 @@ const SignUp = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        if (!email.match(/^[a-zA-Z0-9._%+-]+@(est\.)?univalle\.edu$/)) return updateError("Por favor ingrese un correo institucional")
         if (!userType) return updateError("El campo Tipo de usuario no puede estar vacio")
+        switch (userType) {
+            case "moderator":
+            case "administrator":
+                if (email.match(/^[a-zA-Z0-9._%+-]+@est.univalle\.edu$/)) return updateError("El correo institucional no es valido para el tipo de usuario asignado");
+                break;
+        }
         const data = {
             name,
             last_name: lastName,
@@ -51,7 +58,7 @@ const SignUp = () => {
                                 required
                                 type="text"
                                 placeholder="Nombre"
-                                className="p-2 rounded-md w-full"
+                                className="p-2 rounded-md w-full outline-neutro-tertiary"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
@@ -61,7 +68,7 @@ const SignUp = () => {
                                 required
                                 type="text"
                                 placeholder="Apellidos"
-                                className="p-2 rounded-md w-full"
+                                className="p-2 rounded-md w-full outline-neutro-tertiary"
                                 value={lastName}
                                 onChange={(e) => setLastName(e.target.value)}
                             />
@@ -72,14 +79,14 @@ const SignUp = () => {
                                 type="email"
                                 id="email"
                                 placeholder="Correo Electrónico"
-                                className="p-2 rounded-md w-full"
+                                className="p-2 rounded-md w-full outline-neutro-tertiary"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
                         <div className="mb-4">
                             <select
-                                className="p-2 rounded-md w-full"
+                                className="p-2 rounded-md w-full outline-neutro-tertiary"
                                 value={userType}
                                 onChange={(e) => setUserType(e.target.value)}
                             >
@@ -91,7 +98,7 @@ const SignUp = () => {
                         </div>
                         <div className="mb-4">
                             <select
-                                className="p-2 rounded-md w-full"
+                                className="p-2 rounded-md w-full outline-neutro-tertiary"
                                 value={selectedCampusId}
                                 onChange={(e) => setSelectedCampusId(e.target.value)}
                             >
@@ -108,7 +115,7 @@ const SignUp = () => {
                                 required
                                 type="password"
                                 placeholder="Contraseña"
-                                className="p-2 rounded-md w-full"
+                                className="p-2 rounded-md w-full outline-neutro-tertiary"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />

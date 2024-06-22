@@ -18,16 +18,17 @@ const Section = ({ className }) => {
         staleTime: 1 * 60 * 1000,
         enabled: section ? true : false
     });
-    const template = {
-        file: section.fields.find(item => item.type === "file"),
-        data: section.fields.filter(item => item.type !== "file")
-    }
 
     useEffect(() => {
         if (isError) updateError(error.message);
     }, [error, isError, updateError])
 
     if (!section) return <Navigate to="/" />
+
+    const template = {
+        file: section.fields.find(item => item.type === "file"),
+        data: section.fields.filter(item => item.type !== "file")
+    }
 
     if (isLoading) return <LoadRecords />;
 

@@ -28,6 +28,7 @@ const Login = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (!user.email.match(/^[a-zA-Z0-9._%+-]+@(est\.)?univalle\.edu$/)) return updateError("Por favor ingrese un correo institucional")
         login.mutate(user)
     }
 
@@ -36,8 +37,6 @@ const Login = () => {
     return (
         <>
             <div className="hidden lg:flex flex-grow">
-                <header className="bg-neutro-tertiary p-7 text-center text-white fixed top-0 w-full z-10">
-                </header>
                 <div className="w-[55%]" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 </div>
                 <div className="flex-grow flex flex-col items-center justify-center bg-white p-8 text-black">
@@ -69,9 +68,9 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-            <div className="lg:hidden min-h-screen flex flex-col">
+            <div className="lg:hidden flex-grow flex flex-col">
                 <div className="flex-grow flex flex-col justify-center items-center relative overflow-hidden">
-                    <img className="absolute top-0 object-cover w-full h-full" src={backgroundImage} alt="Background" />
+                    <img className="absolute top-0 object-cover w-full h-full object-center" src={backgroundImage} alt="Background" />
                     <div className="bg-white bg-opacity-75 p-8 relative z-10 rounded-lg shadow-2xl w-11/12">
                         <h2 className="text-4xl font-bold text-[#522B46] mb-6 text-center">BIENVENIDO</h2>
                         <p className="text-center mb-8">ES UN GUSTO VOLVER A VERTE</p>
@@ -79,11 +78,11 @@ const Login = () => {
                             <div className="mb-4">
                                 <input 
                                     type="email"
-                                    id="email"
+                                    id="email-mobile"
                                     required
                                     onChange={(e) => setUser({ ...user, email: e.target.value })}
                                     placeholder="Correo Electrónico"
-                                    className="w-full p-2 rounded-md"
+                                    className="w-full p-2 rounded-md outline-neutro-tertiary"
                                 />
                             </div>
                             <div className="mb-2">
@@ -92,7 +91,7 @@ const Login = () => {
                                     required
                                     onChange={(e) => setUser({ ...user, password: e.target.value })}
                                     placeholder="Contraseña"
-                                    className="w-full p-2 rounded-md"
+                                    className="w-full p-2 rounded-md outline-neutro-tertiary"
                                 />
                             </div>
                             <div className="text-right">

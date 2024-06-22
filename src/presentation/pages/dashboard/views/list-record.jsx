@@ -68,17 +68,19 @@ const ListRecord = () => {
         content: {
             backgroundColor: "white",
             borderRadius: "8px",
-            position:"relative",
-            inset:"0px",
+            position: "relative",
+            inset: "0px",
+            width: window.matchMedia("(max-width: 768px)").matches ? "100%" : "400px",
             padding: "1rem",
             outline: "none",
         },
         overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "#0000007f",
             zIndex: 10,
+            position: "absolute",
             display: "flex",
             width: "100%",
-            height: "100%",
+            height: "100dvh",
             alignItems: "center",
             justifyContent: "center",
             padding: "1rem",
@@ -88,7 +90,7 @@ const ListRecord = () => {
     const records = fetchData.data || [];
 
     return (
-        <div className="flex flex-col item gap-4 flex-grow p-4">
+        <div className="flex flex-col gap-4 flex-grow p-4">
             <div className="flex gap-4">
                 {/* <input
                     type="text"

@@ -12,6 +12,7 @@ import ListRecord from "../pages/dashboard/views/list-record";
 import Section from "../components/section";
 import Moderators from "../pages/dashboard/views/moderators";
 import InformationRecord from "../components/informaction-record";
+import Queries from "../pages/dashboard/views/queries";
 
 export const router = createBrowserRouter([
     {
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
         path: "/dashboard",
         element: <Dashboard />,
         children: [
+            {
+                path: "queries",
+                element: <Queries />
+            },
             {
                 path: ":name",
                 element: <List />,

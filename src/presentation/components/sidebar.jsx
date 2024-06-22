@@ -22,6 +22,9 @@ export default function SideBar({ children }) {
       updateSection(item);
       navigate(`${item.name}/records`);
     }
+    updateSection((prev) => {
+      return { ...prev, name: item.name }
+    })
     setActiveItem(item.name);
   };
 
@@ -30,7 +33,7 @@ export default function SideBar({ children }) {
 
   return (
     <>
-      <aside className="h-screen">
+      <aside className="h-dvh sticky top-0">
         <nav className="h-full flex flex-col bg-white border-r shadow-sm">
           <div className="p-4 pb-2 flex justify-between items-center">
             <img
