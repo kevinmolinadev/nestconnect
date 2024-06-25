@@ -28,7 +28,7 @@ const ListHeader = () => {
 
     return (
         <div className="flex justify-start  border-b">
-            <ul className="flex px-4 gap-4">
+            <ul className="flex px-4 gap-4 items-center">
                 {routes.filter(item => section.id_user === user.id ? item : item.type === "public").map((item, index) => <li key={index} className={`py-4 ${selected === item.path ? "text-neutro-tertiary font-semibold" : ""}`}><Link to={item.path}>{item.name}</Link></li>)}
             </ul>
         </div>

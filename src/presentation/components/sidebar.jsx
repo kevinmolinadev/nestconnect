@@ -8,7 +8,7 @@ import { UserService, UploadService } from "../../infraestructure";
 
 const SidebarContext = createContext();
 
-export default function SideBar({ children }) {
+export default function SideBar({ children, toggleNavBar, toggle }) {
   const { user } = useContext(UserContext);
   const { updateSection, section } = useContext(SectionContext);
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ export default function SideBar({ children }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleMenuClick = (item) => {
+    toggle()
     if (item.id) {
       updateSection(item);
       navigate(`${item.name}/records`);
@@ -33,7 +34,8 @@ export default function SideBar({ children }) {
 
   return (
     <>
-      <aside className="h-dvh sticky top-0">
+      <div className={`${toggleNavBar ? "bg-black/50 absolute inset-0 z-10" : ""} lg:hidden`} />
+      <aside className={`${toggleNavBar ? "max-lg:rounded-r-3xl max-lg:absolute overflow-hidden" : "max-lg:hidden"} h-dvh sticky top-0 z-20`}>
         <nav className="h-full flex flex-col bg-white border-r shadow-sm">
           <div className="p-4 pb-2 flex justify-between items-center">
             <img
@@ -42,11 +44,14 @@ export default function SideBar({ children }) {
             />
             <button
               onClick={() => setExpanded((curr) => !curr)}
-              className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
+              className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 max-lg:hidden"
             >
               {expanded
                 ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="m17 18-6-6 6-6" /><path d="M7 6v12" /></svg>
                 : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="m7 18 6-6-6-6" /><path d="M17 6v12" /></svg>}
+            </button>
+            <button onClick={toggle} className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 lg:hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
             </button>
           </div>
           <SidebarContext.Provider value={{ expanded, handleMenuClick, activeItem }}>
@@ -182,7 +187,7 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
   };
 
   return (
-    <div className="absolute z-10 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="absolute z-30 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-xl mb-4 text-center">Editar Perfil</h2>
         <div className="text-center mb-4 relative">

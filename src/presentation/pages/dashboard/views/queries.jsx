@@ -50,7 +50,7 @@ const Queries = () => {
                         {fetch.data.map((item, index) => <tr key={index}>
                             <td>{index + 1}</td>
                             {
-                                properties.map(key => <td key={key}>{item.data[key]}</td>)
+                                properties.map(key => <td key={key}>{item.data[key]||"--"}</td>)
                             }
                             <td>{Time.getDateString(item.created_at)}</td>
                         </tr>)}

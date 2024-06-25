@@ -27,7 +27,7 @@ const RecordItem = memo(({ item, template: { file, data } }) => {
     }
 
     return (
-        <article onClick={() => handleViewRecord(item)} className="overflow-hidden flex flex-col justify-between rounded-lg shadow-xl hover:cursor-pointer">
+        <article onClick={() => handleViewRecord(item)} className="overflow-hidden flex flex-col justify-between rounded-lg shadow-lg shadow-black/30 hover:cursor-pointer">
             {
                 file && <img className="h-48" src={item.data[file.name]} alt="img" />
             }

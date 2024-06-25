@@ -17,7 +17,7 @@ const List = () => {
                         <ListHeader />
                         <Outlet />
                     </>
-                    : <Section className={""} />
+                    : <Section />
             }
         </div>
     )
