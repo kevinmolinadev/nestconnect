@@ -29,14 +29,14 @@ const Queries = () => {
     };
 
     return (
-        <div className="p-4 w-full">
+        <div className="p-4 w-full flex flex-col flex-grow">
             <ModalWrapper className="justify-start z-10" title="Exportar a Excel" message="Haz clic para descargar los datos en formato Excel. ¡Es rápido y sencillo!" >
                 <button onClick={handleExportClick} className="p-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary">
                     <svg className="w-6" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M11.5 21h-4.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v5m-5 6h7m-3 -3l3 3l-3 3"></path></svg>
                 </button>
             </ModalWrapper>
-            <div className="w-full overflow-x-scroll relative h-full mt-4 rounded-md">
-                <table className="table">
+            <div className="w-full overflow-x-scroll relative flex-grow mt-4 rounded-md">
+                <table className="table table-queries">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -50,7 +50,7 @@ const Queries = () => {
                         {fetch.data.map((item, index) => <tr key={index}>
                             <td>{index + 1}</td>
                             {
-                                properties.map(key => <td key={key}>{item.data[key]||"--"}</td>)
+                                properties.map(key => <td key={key}>{item.data[key] || "--"}</td>)
                             }
                             <td>{Time.getDateString(item.created_at)}</td>
                         </tr>)}

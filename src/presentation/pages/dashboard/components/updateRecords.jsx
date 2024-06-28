@@ -9,6 +9,7 @@ import { UserContext } from '../../../context/user';
 import { useMutation } from '@tanstack/react-query';
 import { Time } from '../../../../helpers/time';
 import Warning from "../../../assets/warning.png";
+import { Compressor } from '../../../../helpers/compressor';
 
 const UpdateRecord = ({ item, onUpdate, onClose }) => {
     const [formData, setFormData] = useState(item.data);
@@ -18,9 +19,10 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
     const [visibility, setVisibility] = useState(item.visibility || "all");
     const { isPending, isError, mutate } = useMutation({ mutationFn: (e) => handleSubmit(e), onSuccess: () => onUpdate(), onError: (e) => updateError(e.message) })
 
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const { name, value, type, files } = e.target;
         const maxSizeInBytes = 3 * 1024 * 1024; //3MB
+        let file = null;
         switch (type) {
             case "file":
                 if (!files[0].type.startsWith('image/')) {
@@ -31,7 +33,8 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
                     updateError(`El archivo seleccionado no debe superar los ${maxSizeInBytes / 1024 / 1024}MB`)
                     return e.target.value = "";
                 }
-                setFormData({ ...formData, [`${name}`]: files[0] })
+                file = await Compressor.compressImg({ file: files[0], dx: 900 });
+                setFormData({ ...formData, [`${name}`]: file });
                 break;
             case "number":
                 setFormData({ ...formData, [`${name}`]: Number(value) })
@@ -41,6 +44,9 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
                 break;
             case "date":
                 setFormData({ ...formData, [`${name}`]: Time.generateDate(value) })
+                break;
+            case "datetime-local":
+                setFormData({ ...formData, [`${name}`]: new Date(value)})
                 break;
             default:
                 setFormData({ ...formData, [`${name}`]: value })
@@ -54,7 +60,7 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const fileField = section.fields.find((field) => field.type === 'file');
-        if (fileField && formData[fileField.name] && formData[fileField.name] instanceof File) {
+        if (fileField && formData[fileField.name] && formData[fileField.name] instanceof Blob) {
             const file = formData[fileField.name];
             formData[fileField.name] = await getUrlImage(file);
         }
@@ -154,7 +160,7 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
             className="fixed inset-0 flex items-center justify-center z-50"
             overlayClassName="fixed inset-0 bg-black bg-opacity-50  z-50"
         >
-             <div className="bg-white p-6 rounded-lg shadow-lg w-3/4 max-w-lg sm:w-3/5">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-3/4 max-w-lg sm:w-3/5">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-semibold">Actualizar Registro</h2>
                     <button
@@ -219,7 +225,7 @@ const UpdateRecord = ({ item, onUpdate, onClose }) => {
                         className="px-4 self-end py-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary"
                     >
                         {isPending || isError ? <div className="flex items-center h-full gap-2">
-                            {isPending ? "Subiendo Imagen" : "Actualizar Registro"}
+                            {"Actualizar Registro"}
                             {isPending && <div className='w-6 h-6 rounded-full animate-spin border-2 border-r-white border-y-black border-l-black' />}
                             {isError && <img src={Warning} alt="warning" />}
                         </div> : "Actualizar Registro"}

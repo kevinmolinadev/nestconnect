@@ -5,6 +5,7 @@ import ProfileDefault from "./profile-default";
 import { useNavigate } from "react-router-dom";
 import { SectionContext } from "../context/section";
 import { UserService, UploadService } from "../../infraestructure";
+import { Compressor } from "../../helpers/compressor";
 
 const SidebarContext = createContext();
 
@@ -151,12 +152,13 @@ function ProfileModal({ profileData, setProfileData, closeModal }) {
 
   const handleChange = async (e) => {
     const { name, value, files } = e.target;
-    if (name === "image_url") {
-      const { url } = await UploadService.getURL({ folder: `users/${formData.id}/profile`, name: files[0].name, type: files[0].type });
-      setUploadFile({ url, file: files[0] });
+    if (name === "image_url" && files[0]) {
+      const file = await Compressor.compressImg({ file: files[0], dx: 200 });
+      const { url } = await UploadService.getURL({ folder: `users/${formData.id}/profile`, name: file.name, type: file.type });
+      setUploadFile({ url, file });
       setFormData({
         ...formData,
-        [name]: URL.createObjectURL(files[0]),
+        [name]: URL.createObjectURL(file),
       });
     } else {
       setFormData({

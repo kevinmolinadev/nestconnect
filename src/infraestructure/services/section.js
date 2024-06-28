@@ -11,7 +11,7 @@ export const SectionService = {
         return HandleRequest.get(`${SECTIONS}/${id}`)
     },
     getRecordsById: (id) => {
-        return HandleRequest.get(`${SECTIONS}/${id}/records`)
+        return HandleRequest.get(`${SECTIONS}/${id}/records?limit=12`)
     },
     getModerators: (id) => {
         return HandleRequest.get(`${SECTIONS}/${id}/moderators`)

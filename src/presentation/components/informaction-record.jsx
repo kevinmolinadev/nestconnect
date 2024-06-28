@@ -18,6 +18,7 @@ const InformationRecord = () => {
     const record = !item ? data : JSON.parse(item);
 
     const formatValue = (value) => {
+        if (value === "--") return null;
         if (typeof value === 'boolean') return value ? { value: "Sí" } : { value: "No" };
         if (typeof value === 'number') return { value: value.toString() };
         if (/^(https:\/\/(docs\.google\.com\/forms\/d\/e\/|forms\.(office|microsoft)\.com\/).*)$/.test(value)) return { value, isUrl: true };
@@ -57,14 +58,16 @@ const InformationRecord = () => {
                     {
                         Object.entries(record.data).filter(([, value]) => !(isUrlImage(value))).map(([key, value], index) => {
                             const valueFormatted = formatValue(value);
-                            return valueFormatted?.isUrl
-                                ? (<div key={index} >
-                                    <a className="rounded-md p-2 px-4 inline-block bg-neutro-tertiary text-white" href={valueFormatted.value} target="_blank">Incribirse</a>
-                                </div>)
-                                : (<div key={index}>
-                                    <h3 className="text-sm font-bold text-gray-800">{key}</h3>
-                                    <p className="text-sm text-gray-600">{valueFormatted.value}</p>
-                                </div>)
+                            return valueFormatted && (
+                                valueFormatted?.isUrl
+                                    ? (<div key={index} >
+                                        <a className="rounded-md p-2 px-4 inline-block bg-neutro-tertiary text-white" href={valueFormatted.value} target="_blank">Incribirse</a>
+                                    </div>)
+                                    : (<div key={index}>
+                                        <h3 className="text-sm font-bold text-gray-800">{key}</h3>
+                                        <p className="text-sm text-gray-600">{valueFormatted.value}</p>
+                                    </div>)
+                            )
                         })
                     }
                 </div>

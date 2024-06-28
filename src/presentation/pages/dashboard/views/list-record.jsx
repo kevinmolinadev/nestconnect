@@ -76,7 +76,7 @@ const ListRecord = () => {
         },
         overlay: {
             backgroundColor: "#0000007f",
-            zIndex: 10,
+            zIndex: 20,
             position: "absolute",
             display: "flex",
             width: "100%",

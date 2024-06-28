@@ -10,7 +10,7 @@ const CardUser = ({ profile, isSelected, isModerator, onDelete }) => {
       </div>
       <div className="flex-grow">
         <p className="font-semibold">{name} {last_name}</p>
-        <p>{email}</p>
+        <p className="text-ellipsis">{email}</p>
       </div>
       {isModerator && (
         <button

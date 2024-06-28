@@ -2,7 +2,7 @@ import { HandleRequest } from "../handleRequest"
 const USERS = import.meta.env.VITE_API_USER
 export const UserService = {
     getUsers: (filter) => {
-        return HandleRequest.get(`${USERS}/search?value=${filter}&limit=5`);
+        return HandleRequest.get(`${USERS}/search?value=${filter}&limit=3`);
     },
     update: (payload) => {
         return HandleRequest.put(`${USERS}/profile`, payload);

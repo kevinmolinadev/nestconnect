@@ -8,6 +8,7 @@ import { Time } from '../../helpers/time';
 import { useMutation } from '@tanstack/react-query';
 import Warning from "../assets/warning.png";
 import Question from './question';
+import { Compressor } from '../../helpers/compressor';
 
 const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
   const [formData, setFormData] = useState({});
@@ -17,9 +18,10 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
   const { isPending, isError, mutate } = useMutation({ mutationFn: (e) => handleSubmit(e), onError: (e) => updateError(e.message), onSuccess })
   const { user } = useContext(UserContext)
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, type, files } = e.target;
     const maxSizeInBytes = 3 * 1024 * 1024; //3MB
+    let file = null;
     switch (type) {
       case "file":
         if (!files[0].type.startsWith('image/')) {
@@ -30,8 +32,9 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
           updateError(`El archivo seleccionado no debe superar los ${maxSizeInBytes / 1024 / 1024}MB`)
           return e.target.value = "";
         }
-        setStateForm({ ...stateForm, [`${name}`]: files[0] })
-        setFormData({ ...formData, [`${name}`]: files[0] })
+        file = await Compressor.compressImg({ file: files[0], dx: 900 })
+        setStateForm({ ...stateForm, [`${name}`]: file })
+        setFormData({ ...formData, [`${name}`]: file })
         break;
       case "number":
         setStateForm({ ...stateForm, [`${name}`]: value })
@@ -44,6 +47,10 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
       case "date":
         setStateForm({ ...stateForm, [`${name}`]: value })
         setFormData({ ...formData, [`${name}`]: Time.generateDate(value) })
+        break;
+      case "datetime-local":
+        setStateForm({ ...stateForm, [`${name}`]: value })
+        setFormData({ ...formData, [`${name}`]: new Date(value) })
         break;
       default:
         setStateForm({ ...stateForm, [`${name}`]: value })
@@ -69,7 +76,6 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
       data: formData,
       visibility
     }
-    console.log(payload);
     await RecordService.create(payload);
     onClose()
   };
@@ -195,7 +201,7 @@ const RenderFieldForm = ({ fields, onClose, onSuccess, section }) => {
           className="px-4 self-end py-2 bg-neutro-tertiary text-white rounded-md hover:bg-neutro-primary"
         >
           {isPending || isError ? <div className="flex items-center h-full gap-2">
-            {isPending ? "Subiendo Imagen" : "Agregar Registro"}
+            {"Agregar Registro"}
             {isPending && <div className='w-6 h-6 rounded-full animate-spin border-2 border-r-white border-y-black border-l-black' />}
             {isError && <img src={Warning} alt="warning" />}
           </div> : "Agregar Registro"}

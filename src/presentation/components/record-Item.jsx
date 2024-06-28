@@ -7,6 +7,7 @@ const RecordItem = memo(({ item, template: { file, data } }) => {
     const { pathname } = useLocation();
 
     const formatValue = (value) => {
+        if (value === "--") return null;
         if (/^(https:\/\/(docs\.google\.com\/forms\/d\/e\/|forms\.(office|microsoft)\.com\/).*)$/.test(value)) return null;
         if (typeof value === 'boolean') return value ? { value: "Sí" } : { value: "No" };
         if (typeof value === 'number') return { value: value.toString() };

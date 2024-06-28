@@ -97,3 +97,8 @@
 .table thead th:last-child {
     right: 0;
 }
+
+.table-queries tbody td:last-child,
+.table-queries thead th:last-child {
+    position: relative;
+}

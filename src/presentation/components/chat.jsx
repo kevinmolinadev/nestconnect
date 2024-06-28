@@ -27,6 +27,7 @@ const Chat = () => {
     const [showAdvisorContactForm, setShowAdvisorContactForm] = useState(false);
     const [confirmationMessageVisible, setConfirmationMessageVisible] = useState(false);
     const [lastAssistantMessageComplete, setLastAssistantMessageComplete] = useState(false);
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     const welcomeMessage = isAnonymous ? "Hola Visitante, soy AVU. ¿En qué puedo ayudarte?" : `Hola ${userName}, soy AVU. ¿En qué puedo ayudarte?`;
     const careerKeywords = {
@@ -72,33 +73,36 @@ const Chat = () => {
     }, [chatUnlocked, userName, isAnonymous]);
 
     useEffect(() => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'es-ES';
-        recognition.continuous = false;
-        recognitionRef.current = recognition;
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'es-ES';
+            recognition.continuous = false;
+            recognitionRef.current = recognition;
 
-        recognition.onstart = () => {
-            setIsListening(true);
-        };
+            recognition.onstart = () => {
+                setIsListening(true);
+            };
 
-        recognition.onerror = (event) => {
-            console.error("Error en el reconocimiento de voz:", event.error);
-        };
+            recognition.onerror = (event) => {
+                console.error("Error en el reconocimiento de voz:", event.error);
+            };
 
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            setNewMessage(prev => prev + (prev.length > 0 ? " " : "") + transcript);
-        };
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                setNewMessage(prev => prev + (prev.length > 0 ? " " : "") + transcript);
+            };
 
-        recognition.onend = () => {
-            setIsListening(false);
-        };
+            recognition.onend = () => {
+                setIsListening(false);
+            };
 
-        return () => {
-            recognition.stop();
-            recognitionRef.current = null;
-        };
+            return () => {
+                recognition.stop();
+                recognitionRef.current = null;
+            };
+        } else {
+            updateError("El reconocimiento de voz no esta disponible en este navagador")
+        }
     }, []);
 
     useEffect(() => {
@@ -365,7 +369,7 @@ const Chat = () => {
                         return <span key={index}>{part}</span>;
                     }
                 })}
-                {message.from === 'assistant' && lastAssistantMessageComplete && (
+                {(message.from === 'assistant' && lastAssistantMessageComplete && SpeechRecognition) && (
                     <button onClick={() => handleVoiceClick(message.text)} className="block hover:scale-105 duration-300 transition-transform">
                         <span role="img" aria-label={isPlaying && index === playableMessageIndex ? "Detener reproducción" : "Reproducir mensaje"}>
                             {isPlaying && index === playableMessageIndex ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5"><circle cx="12" cy="12" r="10" /><line x1="10" x2="10" y1="15" y2="9" /><line x1="14" x2="14" y1="15" y2="9" /></svg> : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></svg>}
@@ -431,9 +435,13 @@ const Chat = () => {
                             </div>}
                     </div>
                     <div className="chat-input p-6 flex gap-2">
-                        <button onClick={toggleListening} className={`bg-neutro-tertiary text-white px-2.5  rounded-lg  ${isListening ? 'bg-red-500' : ''}`}>
-                            {isListening ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" x2="12" y1="19" y2="22" /></svg> : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><line x1="2" x2="22" y1="2" y2="22" /><path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" /><path d="M5 10v2a7 7 0 0 0 12 5" /><path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" /><path d="M9 9v3a3 3 0 0 0 5.12 2.12" /><line x1="12" x2="12" y1="19" y2="22" /></svg>}
-                        </button>
+                        {
+                            SpeechRecognition && (
+                                <button onClick={toggleListening} className={`bg-neutro-tertiary text-white px-2.5  rounded-lg  ${isListening ? 'bg-red-500' : ''}`}>
+                                    {isListening ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" x2="12" y1="19" y2="22" /></svg> : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6"><line x1="2" x2="22" y1="2" y2="22" /><path d="M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" /><path d="M5 10v2a7 7 0 0 0 12 5" /><path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" /><path d="M9 9v3a3 3 0 0 0 5.12 2.12" /><line x1="12" x2="12" y1="19" y2="22" /></svg>}
+                                </button>
+                            )
+                        }
                         <input
                             type="text"
                             className="p-2 w-full rounded-lg border border-black outline-neutro-tertiary"
